@@ -978,4 +978,9 @@ while jugando:
 
 
     clock.tick(60)
+
     pygame.display.flip()
+
+def menu():
+    fondo=pygame.image.load("fondo.png")
+    
