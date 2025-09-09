@@ -448,20 +448,40 @@ def bot(lista_fichas,lista_casillas_ocupadas,color,medida_casilla):
                     elif ficha_bot_actual.tipo=="caballo":
                         lista_opciones_escapar_ficha_bot=eliminar_cords_no_validas2(lista_opciones_escapar_ficha_bot)
                         lista_opciones_escapar_ficha_bot=eliminar_cords_ocupadas_caballo(lista_opciones_escapar_ficha_bot,lista_posiciones_bots)
-                       
+                
                     else:
                         lista_opciones_escapar_ficha_bot=eliminar_cords_no_validas2(lista_opciones_escapar_ficha_bot)
                         lista_opciones_escapar_ficha_bot=movimiento_peon(ficha_bot_actual,lista_posiciones_rivales,lista_posiciones_bots,lista_opciones_ficha_bot_actual)
                     
-                    for cordenada_posible_ficha_bot_escapar in lista_opciones_escapar_ficha_bot:
+                    ######################
+                    lista_cordenadas_amenazadas=[]
+
+                    for ficha_rival3 in lista_rival:
+                        lista_opciones_ficha_rival3=ficha_rival3.restricciones(True)
+                    
+                        if ficha_rival3.tipo!="caballo" and ficha_rival3.tipo!="peon":
+                            lista_opciones_ficha_rival3=cords_atravesadas_bot(lista_opciones_ficha_rival3,lista_posiciones_bots,lista_posiciones_rivales,ficha_rival3)
                         
-                    
-                    
-                    
-                    
-                    
-                    
-                    lista_opciones_finales.append({"atacante":ficha_bot_actual,"victima":cordenada,"valor jugada":valor_jugada,"lista rival":lista_rival})
+                        elif ficha_rival3.tipo=="caballo":
+                            lista_opciones_ficha_rival3=eliminar_cords_no_validas2(lista_opciones_ficha_rival3)
+                            lista_opciones_ficha_rival3=eliminar_cords_ocupadas_caballo(lista_opciones_ficha_rival3,lista_posiciones_rivales)
+                        
+                        else:  
+                            lista_opciones_ficha_rival3=eliminar_cords_no_validas2(lista_opciones_ficha_rival3)
+                            lista_opciones_ficha_rival3=movimiento_peon(ficha_rival3,lista_posiciones_bots,lista_posiciones_rivales,lista_opciones_ficha_rival3)
+                        
+                        for elemento in lista_opciones_ficha_rival3:
+                            lista_cordenadas_amenazadas.append(elemento)
+
+
+                    for cordenada_posible_ficha_bot_escapar in lista_opciones_escapar_ficha_bot:
+                        if cordenada_posible_ficha_bot_escapar not in lista_cordenadas_amenazadas:
+                            if ficha_bot_actual.tipo!="rey":
+                                valor_jugada=(valores_fichas[ficha_bot_actual.tipo])
+                            else:
+                                valor_jugada=(valores_fichas[ficha_bot_actual.tipo])-1
+                            
+                            lista_opciones_finales.append({"atacante":ficha_bot_actual,"victima":cordenada_posible_ficha_bot_escapar,"valor jugada":valor_jugada,"lista rival":lista_rival})
                 
                 
 
