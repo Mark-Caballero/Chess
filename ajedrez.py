@@ -4,7 +4,7 @@ clock=pygame.time.Clock()
 import math
 
 
-medida_casilla=85
+medida_casilla=75
 casillas_por_fila=8
 
 ancho_tablero=medida_casilla*casillas_por_fila
@@ -437,14 +437,36 @@ def bot(lista_fichas,lista_casillas_ocupadas,color,medida_casilla):
                 lista_opciones_posible_ficha_atacante=eliminar_cords_no_validas2(lista_opciones_posible_ficha_atacante)
                 lista_opciones_posible_ficha_atacante=movimiento_peon(posible_ficha_atacante,lista_posiciones_bots,lista_posiciones_rivales,lista_opciones_posible_ficha_atacante)
                 
-
+            
+            for cordenada_posible in lista_opciones_posible_ficha_atacante:
+                if pos_ficha_bot_actual==cordenada_posible:
+                    lista_opciones_escapar_ficha_bot=ficha_bot_actual.restricciones(True)
                     
+                    if ficha_bot_actual.tipo!="caballo" and ficha_bot_actual.tipo!="peon":
+                        lista_opciones_escapar_ficha_bot=cords_atravesadas_bot(lista_opciones_escapar_ficha_bot,lista_posiciones_rivales,lista_posiciones_bots,ficha_bot_actual)
+                    
+                    elif ficha_bot_actual.tipo=="caballo":
+                        lista_opciones_escapar_ficha_bot=eliminar_cords_no_validas2(lista_opciones_escapar_ficha_bot)
+                        lista_opciones_escapar_ficha_bot=eliminar_cords_ocupadas_caballo(lista_opciones_escapar_ficha_bot,lista_posiciones_bots)
+                       
+                    else:
+                        lista_opciones_escapar_ficha_bot=eliminar_cords_no_validas2(lista_opciones_escapar_ficha_bot)
+                        lista_opciones_escapar_ficha_bot=movimiento_peon(ficha_bot_actual,lista_posiciones_rivales,lista_posiciones_bots,lista_opciones_ficha_bot_actual)
+                    
+                    for cordenada_posible_ficha_bot_escapar in lista_opciones_escapar_ficha_bot:
+                        
+                    
+                    
+                    
+                    
+                    
+                    
+                    lista_opciones_finales.append({"atacante":ficha_bot_actual,"victima":cordenada,"valor jugada":valor_jugada,"lista rival":lista_rival})
                 
                 
 
 
-
-#----------------------------------------------------------------------------------------------------------------------
+##----------------------------------------------------------------------------------------------------------------------
     if len(lista_opciones_finales)==0:
         for ficha_bot in lista_bot:
 
