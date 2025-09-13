@@ -4,16 +4,21 @@ clock=pygame.time.Clock()
 import math
 
 
-medida_casilla=75
+medida_casilla=120
 casillas_por_fila=8
 
-ancho_tablero=medida_casilla*casillas_por_fila
-alto_tablero=ancho_tablero
-y=0#fondo
-x=0#fondo
+ancho_tablero=medida_casilla*10
+alto_tablero=ancho_tablero-medida_casilla*2
+medida_casilla=ancho_tablero/10
 
 pantalla=pygame.display.set_mode((ancho_tablero,alto_tablero),pygame.RESIZABLE)
+
+x=0
+y=0
+
+
 lista_opciones=[]#coordenada que se pueden utilizar para la ficha seleccionada
+
 
 
 def movimiento_valido(lista_casillas_ocupadas,lista_coordenadas, tipo_ficha):
@@ -883,12 +888,18 @@ for i in range(1):
     reina_blanca=ficha("blanco",medida_casilla,"reina",x+3,y+7)
     lista_fichas.add(reina_blanca)
 
+lista_fichas_muertas=pygame.sprite.Group()
+
 diccionario_peones={}
+
+diccionario_posiciones_muertas=[{"peon":"8:7","caballo":"9:7","alfil":"8:6","torre":"9:6","reina":"8:5","rey":"9:5"},{"peon":"8:0","caballo":"9:0","alfil":"8:1","torre":"9:1","reina":"8:2","rey":"9:2"}]#blanco,negro
 
 for ficha_ in lista_fichas:
     if ficha_.tipo=="peon":
         diccionario_peones.update({ficha_:True})
 
+alfombra=pygame.image.load("alfombra.png").convert_alpha()
+alfombra=pygame.transform.scale(alfombra,(ancho_tablero/5,alto_tablero))
 ficha_seleccionada = None
 arrastrando=False
 pos_original_fila=0#fila actual
@@ -906,15 +917,18 @@ while jugando:
         if evento.type==pygame.QUIT:
             jugando=False
         
-        #REDIMENSION PANTALLA
+        #REDIMENSIO PANTALLA
         if evento.type==pygame.VIDEORESIZE:
-            ancho_tablero=evento.w 
-            alto_tablero=evento.w
+            
+            ancho_tablero=evento.w
+            alto_tablero=evento.w-evento.w/5
             pantalla=pygame.display.set_mode((ancho_tablero,alto_tablero),pygame.RESIZABLE)
-    
-#········dibujar·tabla··························
-    x=0
+            medida_casilla=ancho_tablero/10
+
+            alfombra=pygame.transform.scale(alfombra,(ancho_tablero/5,alto_tablero))
+    #DIBUJAR TABLERO
     y=0
+    x=0
     for fila in range(8):
         for casilla in range(8):
             if (fila+casilla)%2==0:
@@ -923,7 +937,6 @@ while jugando:
             elif (fila+casilla)%2==1:
                 pygame.draw.rect(pantalla,(139, 69, 19),(x,y,medida_casilla,medida_casilla))
                 x+=medida_casilla
-
         
         x=0
         y+=medida_casilla
@@ -1032,7 +1045,12 @@ while jugando:
                         
                         ficha_seleccionada.columna=pieza.columna
                         ficha_seleccionada.fila=pieza.fila
-                        pieza.kill()
+    
+                        pieza.columna=int(diccionario_posiciones_muertas[turno%2][pieza.tipo][0])
+                        pieza.fila=int(diccionario_posiciones_muertas[turno%2][pieza.tipo][2])
+                        lista_fichas_muertas.add(pieza)     
+                        lista_fichas.remove(pieza)
+                        
                         ficha_seleccionada.actualizar(medida_casilla)
                         colocado=True
                         break
@@ -1041,7 +1059,12 @@ while jugando:
                     if pieza.columna==cord_columna and pieza.fila==cord_fila and ficha_seleccionada.color!=pieza.color and ficha_seleccionada.tipo=="peon" and coordenada_destino in lista_opciones and coordenada_destino not in lista_comparar:
                         ficha_seleccionada.columna=pieza.columna
                         ficha_seleccionada.fila=pieza.fila
-                        pieza.kill()
+                        
+                        pieza.columna=int(diccionario_posiciones_muertas[turno%2][pieza.tipo][0])
+                        pieza.fila=int(diccionario_posiciones_muertas[turno%2][pieza.tipo][2])
+                        lista_fichas_muertas.add(pieza)
+                        lista_fichas.remove(pieza)
+                                                
                         ficha_seleccionada.actualizar(medida_casilla)
                         colocado=True
                         break
@@ -1103,7 +1126,11 @@ while jugando:
         if eliminar_ficha_rival==True:#matar
             ficha_bot.columna=ficha_objetivo.columna
             ficha_bot.fila=ficha_objetivo.fila
-            ficha_objetivo.kill()
+            
+            ficha_objetivo.columna=int(diccionario_posiciones_muertas[turno%2][ficha_objetivo.tipo][0])
+            ficha_objetivo.fila=int(diccionario_posiciones_muertas[turno%2][ficha_objetivo.tipo][2])
+            lista_fichas_muertas.add(ficha_objetivo)
+            lista_fichas.remove(ficha_objetivo)
             ficha_bot.actualizar(medida_casilla)
             turno+=1
 
@@ -1119,7 +1146,6 @@ while jugando:
 
 
     
-    medida_casilla=ancho_tablero/casillas_por_fila #medidas de la casilla segun el tamao de la pantalla
     #dibujar tablero
     y=0
     x=0
@@ -1132,6 +1158,10 @@ while jugando:
             pieza.actualizar(medida_casilla)
         peon_negro.actualizar(medida_casilla)
     
+
+    pantalla.blit(alfombra,(ancho_tablero-(ancho_tablero/5),0))
+
+    lista_fichas_muertas.draw(pantalla)
     lista_fichas.draw(pantalla)
     
 
@@ -1148,9 +1178,12 @@ while jugando:
         pygame.draw.rect(pantalla, (0,0,0), (0,0,medida_casilla/4,medida_casilla/4),4)
 
 
-    
 
 
+
+    if len(lista_fichas_muertas)>0:
+        for ficha_muerta in lista_fichas_muertas:
+            ficha_muerta.actualizar(medida_casilla)
 
     clock.tick(60)
 
