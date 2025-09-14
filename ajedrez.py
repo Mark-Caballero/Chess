@@ -808,8 +808,15 @@ class ficha(pygame.sprite.Sprite):
 
         return lista_opciones
         
+    def agrandar(self):
+        ancho,alto=self.image.get_size()
+        resta=medida_casilla/10
+        self.image=pygame.transform.scale(self.original,(ancho+resta,alto+resta))
+    def reducir(self):
+        ancho,alto=self.image.get_size()
+        resta=medida_casilla/10
+        self.image=pygame.transform.scale(self.original,(ancho-resta,alto-resta))
 
-        
 #····················································································
 
 
@@ -910,6 +917,12 @@ bot_=True
 
 color_bot="negro"
 color_humano="blanco"
+tocando=False
+ficha_tocada=None
+
+for posible_peon in lista_fichas:
+    if posible_peon.tipo=="peon" and posible_peon.color==color_bot:
+        diccionario_peones.update({posible_peon:True})
 #::::::::::::::::::::::↓INICIO WHILE↓::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 jugando=True
 while jugando:
@@ -926,6 +939,23 @@ while jugando:
             medida_casilla=ancho_tablero/10
 
             alfombra=pygame.transform.scale(alfombra,(ancho_tablero/5,alto_tablero))
+    
+
+    if len(lista_fichas_muertas)>0:
+        if ficha_tocada==None:
+            for ficha_eliminada in lista_fichas_muertas:
+                if ficha_eliminada.rect.collidepoint(pygame.mouse.get_pos()):
+                    ficha_tocada=ficha_eliminada
+                    ficha_tocada.agrandar()
+                    break
+    
+    if ficha_tocada!=None and ficha_tocada.rect.collidepoint(pygame.mouse.get_pos())==False:
+        ficha_tocada.reducir()
+        ficha_tocada=None
+
+
+
+    
     #DIBUJAR TABLERO
     y=0
     x=0
@@ -1157,7 +1187,8 @@ while jugando:
         for pieza in lista_fichas:
             pieza.actualizar(medida_casilla)
         peon_negro.actualizar(medida_casilla)
-    
+        
+        
 
     pantalla.blit(alfombra,(ancho_tablero-(ancho_tablero/5),0))
 
@@ -1183,7 +1214,8 @@ while jugando:
 
     if len(lista_fichas_muertas)>0:
         for ficha_muerta in lista_fichas_muertas:
-            ficha_muerta.actualizar(medida_casilla)
+            if ficha_muerta!=ficha_tocada:
+                ficha_muerta.actualizar(medida_casilla)
 
     clock.tick(60)
 
