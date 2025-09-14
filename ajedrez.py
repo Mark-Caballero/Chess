@@ -104,12 +104,13 @@ def convertir2(cordenada):
     y=cordenada[4]
     return x,y
 
-def movimiento_peon(peon,lista_posiciones_equipo_rival,lista_posiciones_equipo_peon,lista_opciones_peon):
+def movimiento_peon(peon,lista_posiciones_equipo_rival,lista_posiciones_equipo_peon,lista_opciones_peon):######################################
     lista_final=[]
     for cord in lista_opciones_peon:
         if cord not in lista_posiciones_equipo_rival and cord not in lista_posiciones_equipo_peon:
             lista_final.append(cord)
     
+
     if peon.color=="blanco":   
         lista_opciones_comprobar=[f"{peon.columna-1}:{peon.fila-1}",f"{peon.columna+1}:{peon.fila-1}"] 
     elif peon.color=="negro":
@@ -118,7 +119,19 @@ def movimiento_peon(peon,lista_posiciones_equipo_rival,lista_posiciones_equipo_p
     for opcion in lista_opciones_comprobar:
         if opcion in lista_posiciones_equipo_rival:
             lista_final.append(opcion)
+
+    pos_peon=f"{peon.columna}:{peon.fila}"
+    
+    if peon.color=="negro" and pos_peon in ["0:1","1:1","2:1","3:1","4:1","5:1","6:1","7:1"]:
+        lista_final.append(f"{peon.columna}:{peon.fila+2}")
+    elif peon.color=="blanco" and pos_peon in ["0:6","1:6","2:6","3:6","4:6","5:6","6:6","7:6"]:
+        lista_final.append(f"{peon.columna}:{peon.fila-2}")
+
+
+
     return lista_final
+
+
 
 
 
@@ -315,6 +328,7 @@ def bot(lista_fichas,lista_casillas_ocupadas,color,medida_casilla):
     lista_blancas=[]#lista de fichas blancas
     lista_negras=[]#lista de fichas negras
     
+    dic_peones=diccionario_peones
     valores_fichas={"rey":9999,"reina":9,"torre":5,"alfil":3,"caballo":3,"peon":1}
     
     for ficha in lista_fichas:#cada ficha de la lista de TODAS las fichas
@@ -365,7 +379,7 @@ def bot(lista_fichas,lista_casillas_ocupadas,color,medida_casilla):
         else:
             lista_opciones_ficha_bot_actual=eliminar_cords_no_validas2(lista_opciones_ficha_bot_actual)
             lista_opciones_ficha_bot_actual=movimiento_peon(ficha_bot_actual,lista_posiciones_rivales,lista_posiciones_bots,lista_opciones_ficha_bot_actual)
-            
+            print(f"{ficha_bot_actual.columna}:{ficha_bot_actual.fila}  ---",lista_opciones_ficha_bot_actual)
         
         
         for cordenada in lista_opciones_ficha_bot_actual:
@@ -901,9 +915,7 @@ diccionario_peones={}
 
 diccionario_posiciones_muertas=[{"peon":"8:7","caballo":"9:7","alfil":"8:6","torre":"9:6","reina":"8:5","rey":"9:5"},{"peon":"8:0","caballo":"9:0","alfil":"8:1","torre":"9:1","reina":"8:2","rey":"9:2"}]#blanco,negro
 
-for ficha_ in lista_fichas:
-    if ficha_.tipo=="peon":
-        diccionario_peones.update({ficha_:True})
+
 
 alfombra=pygame.image.load("alfombra.png").convert_alpha()
 alfombra=pygame.transform.scale(alfombra,(ancho_tablero/5,alto_tablero))
@@ -920,9 +932,9 @@ color_humano="blanco"
 tocando=False
 ficha_tocada=None
 
-for posible_peon in lista_fichas:
-    if posible_peon.tipo=="peon" and posible_peon.color==color_bot:
-        diccionario_peones.update({posible_peon:True})
+
+
+
 #::::::::::::::::::::::↓INICIO WHILE↓::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 jugando=True
 while jugando:
