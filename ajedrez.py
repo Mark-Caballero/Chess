@@ -843,6 +843,23 @@ class comprobador(pygame.sprite.Sprite):
         self.rect.x=pos_x
         self.rect.y=pos_y
 
+
+class mesa(pygame.sprite.Sprite):
+    def __init__(self,columna,fila, color):
+        super().__init__()
+        self.original=pygame.image.load("mesa.png").convert_alpha()
+        self.original=pygame.transform.scale(self.original,(medida_casilla*3,medida_casilla*4))
+        self.image=self.original
+        self.rect=self.image.get_rect()
+        self.columna=columna
+        self.fila=fila
+        
+    def actualizar_mesa(self,mediada_casilla):
+        self.image=pygame.transform.scale(self.original,(medida_casilla*3,medida_casilla*4))
+        self.rect.x=(self.columna*medida_casilla)-medida_casilla/2
+        self.rect.y=self.fila*medida_casilla
+
+
 #::::::::::::::::::::::↑SPRITE FICHAS↑::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::    
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -911,11 +928,32 @@ for i in range(1):
 
 lista_fichas_muertas=pygame.sprite.Group()
 
+
+
+
 diccionario_peones={}
 
 diccionario_posiciones_muertas=[{"peon":"8:7","caballo":"9:7","alfil":"8:6","torre":"9:6","reina":"8:5","rey":"9:5"},{"peon":"8:0","caballo":"9:0","alfil":"8:1","torre":"9:1","reina":"8:2","rey":"9:2"}]#blanco,negro
 
 
+mesa_opciones=mesa(8,2,"blanca")
+
+lista_fichas_negras_mesa=pygame.sprite.Group()
+lista_fichas_blancas_mesa=pygame.sprite.Group()
+
+lista_fichas_negras_mesa.add(
+    ficha("negro",medida_casilla,"reina",mesa_opciones.rect.x+medida_casilla//2,mesa_opciones.rect.y+medida_casilla//2),
+    ficha("negro",medida_casilla,"torre",mesa_opciones.rect.x+medida_casilla+medida_casilla//2,mesa_opciones.rect.y+medida_casilla//2),
+    ficha("negro",medida_casilla,"alfil",mesa_opciones.rect.x+medida_casilla//2,mesa_opciones.rect.y+medida_casilla+medida_casilla//2),
+    ficha("negro",medida_casilla,"caballo",mesa_opciones.rect.x+medida_casilla+medida_casilla//2,mesa_opciones.rect.y+medida_casilla+medida_casilla//2),
+    )
+
+lista_fichas_blancas_mesa.add(
+    ficha("blanco",medida_casilla,"reina",mesa_opciones.rect.x+medida_casilla//2,mesa_opciones.rect.y+medida_casilla//2),
+    ficha("blanco",medida_casilla,"torre",mesa_opciones.rect.x+medida_casilla+medida_casilla//2,mesa_opciones.rect.y+medida_casilla//2),
+    ficha("blanco",medida_casilla,"alfil",mesa_opciones.rect.x+medida_casilla//2,mesa_opciones.rect.y+medida_casilla+medida_casilla//2),
+    ficha("blanco",medida_casilla,"caballo",mesa_opciones.rect.x+medida_casilla+medida_casilla//2,mesa_opciones.rect.y+medida_casilla+medida_casilla//2),
+    )
 
 alfombra=pygame.image.load("alfombra.png").convert_alpha()
 alfombra=pygame.transform.scale(alfombra,(ancho_tablero/5,alto_tablero))
@@ -953,17 +991,7 @@ while jugando:
             alfombra=pygame.transform.scale(alfombra,(ancho_tablero/5,alto_tablero))
     
 
-    if len(lista_fichas_muertas)>0:
-        if ficha_tocada==None:
-            for ficha_eliminada in lista_fichas_muertas:
-                if ficha_eliminada.rect.collidepoint(pygame.mouse.get_pos()):
-                    ficha_tocada=ficha_eliminada
-                    ficha_tocada.agrandar()
-                    break
-    
-    if ficha_tocada!=None and ficha_tocada.rect.collidepoint(pygame.mouse.get_pos())==False:
-        ficha_tocada.reducir()
-        ficha_tocada=None
+
 
 
 
@@ -1223,11 +1251,15 @@ while jugando:
 
 
 
-
     if len(lista_fichas_muertas)>0:
         for ficha_muerta in lista_fichas_muertas:
             if ficha_muerta!=ficha_tocada:
                 ficha_muerta.actualizar(medida_casilla)
+    
+    pantalla.blit(mesa_opciones.image,mesa_opciones.rect)
+    mesa_opciones.actualizar_mesa(medida_casilla)
+
+
 
     clock.tick(60)
 
