@@ -693,7 +693,7 @@ def matar_peon(ficha_selec,lista_fichas):
 
 
 class ficha(pygame.sprite.Sprite):
-    def __init__(self,color,altura,tipo,columna,fila):
+    def __init__(self,color,altura,tipo,columna,fila,mesa):
         super().__init__()
 
         if color=="blanco":
@@ -725,12 +725,17 @@ class ficha(pygame.sprite.Sprite):
             elif tipo=="torre":
                 self.original=pygame.image.load("torre_negra.png").convert_alpha()
 
-        self.fila=fila#y
-        self.columna=columna#x
-        self.tipo=tipo
-        self.color=color
-        self.actualizar(altura)
-    
+        if mesa==False:
+            self.fila=fila#y
+            self.columna=columna#x
+            self.tipo=tipo
+            self.color=color
+            self.actualizar(altura)
+        else:
+            self.rect=self.original.get_rect()
+            self.rect.x=columna
+            self.rect.y=fila
+            self.actualizar_ficha_mesa(medida_casilla,columna,fila)
     def actualizar(self,altura):
         self.image=self.original
         self.image=pygame.transform.scale(self.image,(54*altura//100,altura))
@@ -745,8 +750,7 @@ class ficha(pygame.sprite.Sprite):
         mouse=pygame.mouse.get_pos()
         self.rect.center=(mouse[0],mouse[1])
         self.actualizar_posicion_logica()
-#::::::::::::::4/8/25:::::primer intento para hacer las normas de colocacion de las fichas
-#para hacer las diferentes situaciones segun el turno o diferenias de movimiento a la hora de matar a otra ficha, pon los requisitos al lado del self
+
     def restricciones(self,primer_movimento):
         lista_opciones=[]
         if self.tipo == "peon":
@@ -831,6 +835,13 @@ class ficha(pygame.sprite.Sprite):
         resta=medida_casilla/10
         self.image=pygame.transform.scale(self.original,(ancho-resta,alto-resta))
 
+    def actualizar_ficha_mesa(self,medida_casilla,cord_x,cord_y):
+        self.image=self.original
+        self.image=pygame.transform.scale(self.image,(54*medida_casilla//100,medida_casilla))
+        self.rect=self.image.get_rect()
+        self.rect.x=cord_x
+        self.rect.y=cord_y
+
 #····················································································
 
 
@@ -862,36 +873,7 @@ class mesa(pygame.sprite.Sprite):
 
 #::::::::::::::::::::::↑SPRITE FICHAS↑::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::    
 
-class ficha_mesa(pygame.sprite.Sprite):
-    def __init__(self,x,y,tipo,color):
-        super().__init__()
 
-        if color=="blanco":
-            if tipo=="alfil":
-                self.original=pygame.image.load("alfil_blanco.png").convert_alpha()
-            elif tipo=="caballo":
-                self.original=pygame.image.load("caballo_blanco.png").convert_alpha()
-            elif tipo=="reina": 
-                self.original=pygame.image.load("reina_blanca.png").convert_alpha()
-            elif tipo=="torre":
-                self.original=pygame.image.load("torre_blanca.png").convert_alpha()
-
-        elif color=="negro":
-            if tipo=="alfil":
-                self.original=pygame.image.load("alfil_negro.png").convert_alpha()
-            elif tipo=="caballo":
-                self.original=pygame.image.load("caballo_negro.png").convert_alpha()
-            elif tipo=="reina":
-                self.original=pygame.image.load("reina_negra.png").convert_alpha()
-            elif tipo=="torre":
-                self.original=pygame.image.load("torre_negra.png").convert_alpha()
-
-    def actualizar_ficha_mesa(self,medida_casilla,cord_x,cord_y):
-        self.image=self.original
-        self.image=pygame.transform.scale(self.image,(54*medida_casilla//100,medida_casilla))
-        self.rect=self.image.get_rect()
-        self.rect.x=cord_x
-        self.rect.y=cord_y
 
 
 
@@ -901,63 +883,63 @@ class ficha_mesa(pygame.sprite.Sprite):
 lista_fichas=pygame.sprite.Group()#lista sprites
 for i in range(1):
     for c in range(8):
-            peon_negro=ficha("negro",medida_casilla,"peon",x+c,y+1)#peon negro 
+            peon_negro=ficha("negro",medida_casilla,"peon",x+c,y+1,False)#peon negro 
             lista_fichas.add(peon_negro)
         
     for c in range(8):
-            peon_blanco=ficha("blanco",medida_casilla,"peon",x+c,y+6)#peon blanco 
+            peon_blanco=ficha("blanco",medida_casilla,"peon",x+c,y+6,False)#peon blanco 
             lista_fichas.add(peon_blanco)
 
     #torres negras
-    torre_negra=ficha("negro",medida_casilla,"torre",x,y)
+    torre_negra=ficha("negro",medida_casilla,"torre",x,y,False)
     lista_fichas.add(torre_negra)
-    torre_negra=ficha("negro",medida_casilla,"torre",x+7,y)
+    torre_negra=ficha("negro",medida_casilla,"torre",x+7,y,False)
     lista_fichas.add(torre_negra)
 
     #torres blancas
-    torre_blanca=ficha("blanco",medida_casilla,"torre",x,y+7)
+    torre_blanca=ficha("blanco",medida_casilla,"torre",x,y+7,False)
     lista_fichas.add(torre_blanca)
-    torre_blanca=ficha("blanco",medida_casilla,"torre",x+7,y+7)
+    torre_blanca=ficha("blanco",medida_casilla,"torre",x+7,y+7,False)
     lista_fichas.add(torre_blanca)
 
     #caballos negros
-    caballo_negro=ficha("negro",medida_casilla,"caballo",x+1,y)
+    caballo_negro=ficha("negro",medida_casilla,"caballo",x+1,y,False)
     lista_fichas.add(caballo_negro)
-    caballo_negro=ficha("negro",medida_casilla,"caballo",x+6,y)
+    caballo_negro=ficha("negro",medida_casilla,"caballo",x+6,y,False)
     lista_fichas.add(caballo_negro)
 
     #caballos blancos
-    caballo_blanco=ficha("blanco",medida_casilla,"caballo",x+1,y+7)
+    caballo_blanco=ficha("blanco",medida_casilla,"caballo",x+1,y+7,False)
     lista_fichas.add(caballo_blanco)
-    caballo_blanco=ficha("blanco",medida_casilla,"caballo",x+6,y+7)
+    caballo_blanco=ficha("blanco",medida_casilla,"caballo",x+6,y+7,False)
     lista_fichas.add(caballo_blanco)
 
     #alfiles negros
-    alfil_negro=ficha("negro",medida_casilla,"alfil",x+2,y)
+    alfil_negro=ficha("negro",medida_casilla,"alfil",x+2,y,False)
     lista_fichas.add(alfil_negro)
-    alfil_negro=ficha("negro",medida_casilla,"alfil",x+5,y)
+    alfil_negro=ficha("negro",medida_casilla,"alfil",x+5,y,False)
     lista_fichas.add(alfil_negro)
 
     #alfiles blancos
-    alfil_blanco=ficha("blanco",medida_casilla,"alfil",x+2,y+7)
+    alfil_blanco=ficha("blanco",medida_casilla,"alfil",x+2,y+7,False)
     lista_fichas.add(alfil_blanco)
-    alfil_blanco=ficha("blanco",medida_casilla,"alfil",x+5,y+7)
+    alfil_blanco=ficha("blanco",medida_casilla,"alfil",x+5,y+7,False)
     lista_fichas.add(alfil_blanco)
 
     #rey negro
-    rey_negro=ficha("negro",medida_casilla,"rey",x+4,y)
+    rey_negro=ficha("negro",medida_casilla,"rey",x+4,y,False)
     lista_fichas.add(rey_negro)
 
     #rey blanco
-    rey_blanco=ficha("blanco",medida_casilla,"rey",x+4,y+7)
+    rey_blanco=ficha("blanco",medida_casilla,"rey",x+4,y+7,False)
     lista_fichas.add(rey_blanco)
 
     #reina negra
-    reina_negra=ficha("negro",medida_casilla,"reina",x+3,y)
+    reina_negra=ficha("negro",medida_casilla,"reina",x+3,y,False)
     lista_fichas.add(reina_negra)
 
     #reina blanca
-    reina_blanca=ficha("blanco",medida_casilla,"reina",x+3,y+7)
+    reina_blanca=ficha("blanco",medida_casilla,"reina",x+3,y+7,False)
     lista_fichas.add(reina_blanca)
 
 lista_fichas_muertas=pygame.sprite.Group()
@@ -976,23 +958,23 @@ mesa_opciones=mesa(medida_casilla*8,2*medida_casilla,"blanca")
 
 #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
 lista_fichas_negras_mesa=pygame.sprite.Group()
 lista_fichas_blancas_mesa=pygame.sprite.Group()
 
 lista_fichas_negras_mesa.add(
-    ficha_mesa("negro",medida_casilla,"reina",mesa_opciones.rect.x+medida_casilla//2,mesa_opciones.rect.y+medida_casilla//2),
-    ficha_mesa("negro",medida_casilla,"torre",mesa_opciones.rect.x+medida_casilla+medida_casilla//2,mesa_opciones.rect.y+medida_casilla//2),
-    ficha_mesa("negro",medida_casilla,"alfil",mesa_opciones.rect.x+medida_casilla//2,mesa_opciones.rect.y+medida_casilla+medida_casilla//2),
-    ficha_mesa("negro",medida_casilla,"caballo",mesa_opciones.rect.x+medida_casilla+medida_casilla//2,mesa_opciones.rect.y+medida_casilla+medida_casilla//2),
+    ficha("negro",medida_casilla,"reina",mesa_opciones.rect.x+medida_casilla//2,mesa_opciones.rect.y+medida_casilla//2,True),
+    ficha("negro",medida_casilla,"torre",mesa_opciones.rect.x+medida_casilla+medida_casilla//2,mesa_opciones.rect.y+medida_casilla//2,True),
+    ficha("negro",medida_casilla,"alfil",mesa_opciones.rect.x+medida_casilla//2,mesa_opciones.rect.y+medida_casilla+medida_casilla//2,True),
+    ficha("negro",medida_casilla,"caballo",mesa_opciones.rect.x+medida_casilla+medida_casilla//2,mesa_opciones.rect.y+medida_casilla+medida_casilla//2,True),
     )
 
 lista_fichas_blancas_mesa.add(
-    ficha_mesa("blanco",medida_casilla,"reina",mesa_opciones.rect.x+medida_casilla//2,mesa_opciones.rect.y+medida_casilla//2),
-    ficha_mesa("blanco",medida_casilla,"torre",mesa_opciones.rect.x+medida_casilla+medida_casilla//2,mesa_opciones.rect.y+medida_casilla//2),
-    ficha_mesa("blanco",medida_casilla,"alfil",mesa_opciones.rect.x+medida_casilla//2,mesa_opciones.rect.y+medida_casilla+medida_casilla//2),
-    ficha_mesa("blanco",medida_casilla,"caballo",mesa_opciones.rect.x+medida_casilla+medida_casilla//2,mesa_opciones.rect.y+medida_casilla+medida_casilla//2),
+    ficha("blanco",medida_casilla,"reina",mesa_opciones.rect.x+medida_casilla//2,mesa_opciones.rect.y+medida_casilla//2,True),
+    ficha("blanco",medida_casilla,"torre",mesa_opciones.rect.x+medida_casilla+medida_casilla//2,mesa_opciones.rect.y+medida_casilla//2,True),
+    ficha("blanco",medida_casilla,"alfil",mesa_opciones.rect.x+medida_casilla//2,mesa_opciones.rect.y+medida_casilla+medida_casilla//2,True),
+    ficha("blanco",medida_casilla,"caballo",mesa_opciones.rect.x+medida_casilla+medida_casilla//2,mesa_opciones.rect.y+medida_casilla+medida_casilla//2,True),
     )
-
 #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
@@ -1296,13 +1278,54 @@ while jugando:
         for ficha_muerta in lista_fichas_muertas:
             if ficha_muerta!=ficha_tocada:
                 ficha_muerta.actualizar(medida_casilla)
+
     
     pantalla.blit(mesa_opciones.image,mesa_opciones.rect)
+    
     mesa_opciones.actualizar_mesa(medida_casilla,medida_casilla*7+medida_casilla/2,2*medida_casilla)
-    lista_fichas_blancas_mesa.draw(pantalla)
-    for ficha_mesa_blanca in lista_fichas_blancas_mesa:
-        pass
-        #ficha_mesa_blanca.actualizar_ficha_mesa(self,medida_casilla,cord_x,cord_y)
+    
+
+    if turno%2==0:
+        lista_fichas_mesa_actual=lista_fichas_blancas_mesa
+    else:
+        lista_fichas_mesa_actual=lista_fichas_negras_mesa
+
+
+    if ficha_tocada==None:
+        for ficha_mesa in lista_fichas_mesa_actual:
+            if ficha_mesa.rect.collidepoint(pygame.mouse.get_pos()):
+                ficha_tocada=ficha_mesa
+                ficha_tocada.agrandar()
+                break
+    
+    if tocando==True:
+        for ficha_ in lista_fichas_mesa_actual:
+            if ficha_.rect.collidepoint(pygame.mouse.get_pos())==False and ficha_==ficha_tocada:
+                ficha_.reducir()
+                tocando=False
+                ficha_tocada=None
+                break
+    
+    lista_fichas_mesa_actual.draw(pantalla)
+
+    cord_y=mesa_opciones.rect.y
+    cord_x=mesa_opciones.rect.x
+    
+    #actualizar_ficha_mesa(self,medida_casilla,cord_x,cord_y)
+    c=0
+    
+    
+    for ficha_mesa in lista_fichas_mesa_actual:
+        if c==0 and ficha_mesa!=ficha_tocada:
+            ficha_mesa.actualizar_ficha_mesa(medida_casilla,cord_x+(medida_casilla/10)*9,cord_y+(medida_casilla/4)*3)#reina
+        elif c==1 and ficha_mesa!=ficha_tocada:
+            ficha_mesa.actualizar_ficha_mesa(medida_casilla,cord_x+medida_casilla+(medida_casilla/10)*6,cord_y+(medida_casilla/4)*3)#torre
+        elif c==2 and ficha_mesa!=ficha_tocada:
+            ficha_mesa.actualizar_ficha_mesa(medida_casilla,cord_x+(medida_casilla/10)*9,cord_y+((medida_casilla/4)*3)*3)#alfil
+        elif c==3 and ficha_mesa!=ficha_tocada:
+            ficha_mesa.actualizar_ficha_mesa(medida_casilla,cord_x+medida_casilla+(medida_casilla/10)*6,cord_y+((medida_casilla/4)*3)*3)#caballo
+        c+=1
+
 
 
     clock.tick(60)
