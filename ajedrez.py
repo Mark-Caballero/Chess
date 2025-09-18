@@ -122,9 +122,12 @@ def movimiento_peon(peon,lista_posiciones_equipo_rival,lista_posiciones_equipo_p
 
     pos_peon=f"{peon.columna}:{peon.fila}"
     
-    if peon.color=="negro" and pos_peon in ["0:1","1:1","2:1","3:1","4:1","5:1","6:1","7:1"]:
+    if peon.color=="negro" and pos_peon in ["0:1","1:1","2:1","3:1","4:1","5:1","6:1","7:1"] and f"{pos_peon[0]}:{int(pos_peon[2])+2}" not in lista_posiciones_equipo_rival and f"{pos_peon[0]}:{int(pos_peon[2])+1}" not in lista_posiciones_equipo_rival and f"{pos_peon[0]}:{int(pos_peon[2])+2}" not in lista_posiciones_equipo_peon and f"{pos_peon[0]}:{int(pos_peon[2])+1}" not in lista_posiciones_equipo_peon :
         lista_final.append(f"{peon.columna}:{peon.fila+2}")
-    elif peon.color=="blanco" and pos_peon in ["0:6","1:6","2:6","3:6","4:6","5:6","6:6","7:6"]:
+            
+    
+    
+    elif peon.color=="blanco" and pos_peon in ["0:6","1:6","2:6","3:6","4:6","5:6","6:6","7:6"] and f"{pos_peon[0]}:{int(pos_peon[2])-2}" not in lista_posiciones_equipo_rival and f"{pos_peon[0]}:{int(pos_peon[2])-1}" not in lista_posiciones_equipo_rival and f"{pos_peon[0]}:{int(pos_peon[2])+2}" not in lista_posiciones_equipo_peon and f"{pos_peon[0]}:{int(pos_peon[2])+1}" not in lista_posiciones_equipo_peon :
         lista_final.append(f"{peon.columna}:{peon.fila-2}")
 
 
@@ -266,6 +269,18 @@ def cords_atravesadas_bot(lista_cords_bot,lista_posiciones_rivales,lista_posicio
 
 
 
+
+def movimiento_realista(cord_a,cord_b):
+    x_a=int(cord_a[0])
+    y_a=int(cord_a[2])
+
+    x_b=int(cord_b[0])
+    y_b=int(cord_b[2])
+
+    movimiento_x=x_a-x_b
+    movimiento_y=y_a-y_b
+
+    return (movimiento_x/2,movimiento_y/2)
 
 
 
@@ -735,7 +750,7 @@ class ficha(pygame.sprite.Sprite):
             self.rect=self.original.get_rect()
             self.rect.x=columna
             self.rect.y=fila
-            self.actualizar_ficha_mesa(medida_casilla,columna,fila)
+            self.actualizar_posicion_especifica(medida_casilla,columna,fila)
     def actualizar(self,altura):
         self.image=self.original
         self.image=pygame.transform.scale(self.image,(54*altura//100,altura))
@@ -835,7 +850,7 @@ class ficha(pygame.sprite.Sprite):
         resta=medida_casilla/10
         self.image=pygame.transform.scale(self.original,(ancho-resta,alto-resta))
 
-    def actualizar_ficha_mesa(self,medida_casilla,cord_x,cord_y):
+    def actualizar_posicion_especifica(self,medida_casilla,cord_x,cord_y):
         self.image=self.original
         self.image=pygame.transform.scale(self.image,(54*medida_casilla//100,medida_casilla))
         self.rect=self.image.get_rect()
@@ -1296,6 +1311,7 @@ while jugando:
             if ficha_mesa.rect.collidepoint(pygame.mouse.get_pos()):
                 ficha_tocada=ficha_mesa
                 ficha_tocada.agrandar()
+                tocando=True
                 break
     
     if tocando==True:
@@ -1306,27 +1322,34 @@ while jugando:
                 ficha_tocada=None
                 break
     
-    lista_fichas_mesa_actual.draw(pantalla)
-
+    if tocando==True:
+        print(tocando)
+    
     cord_y=mesa_opciones.rect.y
     cord_x=mesa_opciones.rect.x
     
-    #actualizar_ficha_mesa(self,medida_casilla,cord_x,cord_y)
+    #actualizar_posicion_especifica(self,medida_casilla,cord_x,cord_y)
     c=0
     
     
     for ficha_mesa in lista_fichas_mesa_actual:
         if c==0 and ficha_mesa!=ficha_tocada:
-            ficha_mesa.actualizar_ficha_mesa(medida_casilla,cord_x+(medida_casilla/10)*9,cord_y+(medida_casilla/4)*3)#reina
+            ficha_mesa.actualizar_posicion_especifica(medida_casilla,cord_x+(medida_casilla/10)*9,cord_y+(medida_casilla/4)*3)#reina
         elif c==1 and ficha_mesa!=ficha_tocada:
-            ficha_mesa.actualizar_ficha_mesa(medida_casilla,cord_x+medida_casilla+(medida_casilla/10)*6,cord_y+(medida_casilla/4)*3)#torre
+            ficha_mesa.actualizar_posicion_especifica(medida_casilla,cord_x+medida_casilla+(medida_casilla/10)*6,cord_y+(medida_casilla/4)*3)#torre
         elif c==2 and ficha_mesa!=ficha_tocada:
-            ficha_mesa.actualizar_ficha_mesa(medida_casilla,cord_x+(medida_casilla/10)*9,cord_y+((medida_casilla/4)*3)*3)#alfil
+            ficha_mesa.actualizar_posicion_especifica(medida_casilla,cord_x+(medida_casilla/10)*9,cord_y+((medida_casilla/4)*3)*3)#alfil
         elif c==3 and ficha_mesa!=ficha_tocada:
-            ficha_mesa.actualizar_ficha_mesa(medida_casilla,cord_x+medida_casilla+(medida_casilla/10)*6,cord_y+((medida_casilla/4)*3)*3)#caballo
+            ficha_mesa.actualizar_posicion_especifica(medida_casilla,cord_x+medida_casilla+(medida_casilla/10)*6,cord_y+((medida_casilla/4)*3)*3)#caballo
+        
+        
+
+        
+        
         c+=1
 
 
+    lista_fichas_mesa_actual.draw(pantalla)
 
     clock.tick(60)
 
