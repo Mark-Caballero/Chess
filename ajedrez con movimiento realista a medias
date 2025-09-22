@@ -295,7 +295,8 @@ def movimiento_realista(cord_a,cord_b,medida_casilla):
     movimiento_x/=medida_casilla*2
     movimiento_y/=medida_casilla*2
 
-    return movimiento_x,movimiento_y
+    return movimiento_x*2,movimiento_y*2
+
 
 
 
@@ -661,7 +662,6 @@ def bot(lista_fichas,lista_casillas_ocupadas,color,medida_casilla):
 
 
     return opcion_final_
-
 
 
 
@@ -1035,6 +1035,8 @@ cordenada_actual=None
 
 cordenada_objetivo_reducida=None
 
+
+num_turnos_bot=0
 #::::::::::::::::::::::↓INICIO WHILE↓::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 jugando=True
 while jugando:
@@ -1252,8 +1254,13 @@ while jugando:
                     ficha_objetivo=ficha_rival
             
             if eliminar_ficha_rival==True:#matar
-                ficha_bot.columna=ficha_objetivo.columna
-                ficha_bot.fila=ficha_objetivo.fila
+                ficha_animacion_activa=ficha_bot
+                cordenada_objetivo=f"{((float(objetivo['victima'][0]))*medida_casilla)+(medida_casilla/4)}:{float(objetivo['victima'][2])*medida_casilla}"
+                cordenada_objetivo_reducida=f"{int(objetivo['victima'][0])}:{int(objetivo['victima'][2])}"
+                animacion=True
+                
+                cordenada_actual=f"{ficha_animacion_activa.rect.x}:{ficha_animacion_activa.rect.y}"
+                num_x,num_y=movimiento_realista(cordenada_actual,cordenada_objetivo,medida_casilla)
                 
                 ficha_objetivo.columna=int(diccionario_posiciones_muertas[turno%2][ficha_objetivo.tipo][0])
                 ficha_objetivo.fila=int(diccionario_posiciones_muertas[turno%2][ficha_objetivo.tipo][2])
@@ -1262,16 +1269,20 @@ while jugando:
                 ficha_animacion_activa=ficha_bot
                 turno+=1
 
+                num_turnos_bot+=1
+
             else:#no matar
                 ficha_animacion_activa=ficha_bot
-                cordenada_objetivo=f"{((int(objetivo['victima'][0]))*medida_casilla)+(medida_casilla/4)}:{int(objetivo['victima'][2])*medida_casilla}"
+                cordenada_objetivo=f"{((float(objetivo['victima'][0]))*medida_casilla)+(medida_casilla/4)}:{float(objetivo['victima'][2])*medida_casilla}"
                 cordenada_objetivo_reducida=f"{int(objetivo['victima'][0])}:{int(objetivo['victima'][2])}"
                 animacion=True
                 
-                cordenada_actual=f"{ficha_animacion_activa.rect.x}:{ficha_animacion_activa.rect.y}"
+                cordenada_actual=f"{float(ficha_animacion_activa.rect.x)}:{float(ficha_animacion_activa.rect.y)}"
                 num_x,num_y=movimiento_realista(cordenada_actual,cordenada_objetivo,medida_casilla)
                 
                 turno+=1
+
+                num_turnos_bot+=1
 
 
 
@@ -1389,12 +1400,10 @@ while jugando:
 
     clock.tick(120)
 
-    if animacion==True:
-        pygame.draw.circle(pantalla, (255,0,0), (ficha_animacion_activa.rect.x,ficha_animacion_activa.rect.y), 2)
-
+    
     
     #actualizar_mesa(self,mediada_casilla,x,y):
-    if animacion==True:
+    if animacion==True :
         print("--------------------------------------")
         print("animacion: ",animacion)
         print("ficha animacion activa: ",ficha_animacion_activa,ficha_animacion_activa.tipo)
@@ -1403,6 +1412,7 @@ while jugando:
         print("corenada objetivo reducida: ",cordenada_objetivo_reducida)
         print("cord actual ficha reucida: ",simplificar_cord(f"{ficha_animacion_activa.rect.x}:{ficha_animacion_activa.rect.y}",medida_casilla))
         print("sumatorio",num_x,num_y)
+        print("numero de movimiento bot:", num_turnos_bot)
         print("--------------------------------------")
 
     
@@ -1410,5 +1420,7 @@ while jugando:
 
 
 def menu():
+    fondo=pygame.image.load("fondo.png")
+    
     fondo=pygame.image.load("fondo.png")
     
