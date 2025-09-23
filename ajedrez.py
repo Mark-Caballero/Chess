@@ -258,29 +258,45 @@ def cords_atravesadas_bot(lista_cords_bot,lista_posiciones_rivales,lista_posicio
             lista_final.append(elemento)
         #lista_final.append(lista_append)
 
-    #print(lista_final,"                lista_final")
     
-    
-    #print("‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖")
     return lista_final
     
 
+def filtrar(cord):
+    x=""
+    y=""
+    yy=False
+    for digito in cord:
+        if digito !=":" and yy==False:
+            x+=digito
+        elif digito !=":" and yy==True:
+            y+=digito
+        else:
+            yy=True
+    
+
+    if "." in x and "." in y:
+        return int(float(x)),int(float(y))
+    else:
+        return int(x), int(y)    
+    
 
 
 
+def movimiento_realista(cord_a,cord_b,medida_casilla):
+    x_a,y_a=filtrar(cord_a)
+
+    x_b,y_b=filtrar(cord_b)
+
+    movimiento_x=x_b-x_a#pixeles horizontales que ha de recorrer 
+    movimiento_y=y_b-y_a#pixeles verticales que ha de recorrer
 
 
-def movimiento_realista(cord_a,cord_b):
-    x_a=int(cord_a[0])
-    y_a=int(cord_a[2])
+    movimiento_x/=medida_casilla*2
+    movimiento_y/=medida_casilla*2
 
-    x_b=int(cord_b[0])
-    y_b=int(cord_b[2])
+    return movimiento_x*2,movimiento_y*2
 
-    movimiento_x=x_a-x_b
-    movimiento_y=y_a-y_b
-
-    return (movimiento_x/2,movimiento_y/2)
 
 
 
@@ -388,13 +404,13 @@ def bot(lista_fichas,lista_casillas_ocupadas,color,medida_casilla):
         
         elif ficha_bot_actual.tipo=="rey":
             lista_opciones_ficha_bot_actual=movimiento_rey(lista_posiciones_bots,lista_opciones_ficha_bot_actual)
-            print("restriccion hecha a rey")
-            print(lista_opciones_ficha_bot_actual)
+            #print("restriccion hecha a rey")
+            #print(lista_opciones_ficha_bot_actual)
 
         else:
             lista_opciones_ficha_bot_actual=eliminar_cords_no_validas2(lista_opciones_ficha_bot_actual)
             lista_opciones_ficha_bot_actual=movimiento_peon(ficha_bot_actual,lista_posiciones_rivales,lista_posiciones_bots,lista_opciones_ficha_bot_actual)
-            print(f"{ficha_bot_actual.columna}:{ficha_bot_actual.fila}  ---",lista_opciones_ficha_bot_actual)
+            #print(f"{ficha_bot_actual.columna}:{ficha_bot_actual.fila}  ---",lista_opciones_ficha_bot_actual)
         
         
         for cordenada in lista_opciones_ficha_bot_actual:
@@ -651,7 +667,6 @@ def bot(lista_fichas,lista_casillas_ocupadas,color,medida_casilla):
 
 
 
-
 #___________________________________________________________________________
 def comprobador_coordenadas(cord1,cord2):
     cord1=str(cord1)
@@ -889,8 +904,11 @@ class mesa(pygame.sprite.Sprite):
 #::::::::::::::::::::::↑SPRITE FICHAS↑::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::    
 
 
-
-
+def simplificar_cord(cord_objetivo, medida_casilla):
+    x,y=filtrar(cord_objetivo)
+    x//=medida_casilla
+    y//=medida_casilla
+    return f"{int(x)}:{int(y)}"
 
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -1009,8 +1027,28 @@ tocando=False
 ficha_tocada=None
 
 
+animacion=False
+ficha_animacion_activa=None
+
+cordenada_objetivo=None
+cordenada_actual=None
+
+cordenada_objetivo_reducida=None
 
 
+num_turnos_bot=0
+
+lista_blancas=pygame.sprite.Group()
+lista_negras=pygame.sprite.Group()
+for ficha_actual in lista_fichas:
+    if ficha_actual.color=="blanco":
+        lista_blancas.add(ficha_actual)
+    else:
+        lista_negras.add(ficha_actual)
+
+
+lista_turno_actual=None
+Lista_rival_actual=None
 #::::::::::::::::::::::↓INICIO WHILE↓::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 jugando=True
 while jugando:
@@ -1029,11 +1067,6 @@ while jugando:
             alfombra=pygame.transform.scale(alfombra,(ancho_tablero/5,alto_tablero))
     
 
-
-
-
-
-    
     #DIBUJAR TABLERO
     y=0
     x=0
@@ -1055,219 +1088,275 @@ while jugando:
         lista_casillas_ocupadas.append(f"{pieza.columna}:{pieza.fila}")
 
 #:::::::::::::MOVER FICHA::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-    if ((turno%2==0 and color_humano=="blanco")or(turno%2==1 and color_humano=="negro")) or bot_==False:
-        mouse=pygame.mouse.get_pos()
-        mouse_cord=f"{int(mouse[0]//medida_casilla)}:{int(mouse[1]//medida_casilla)}"
-        boton=pygame.mouse.get_pressed()
-        
-        if boton[0]==True and ficha_seleccionada==None:#primer click
+    if animacion==False or animacion==True:
+        if ((turno%2==0 and color_humano=="blanco")or(turno%2==1 and color_humano=="negro")) or bot_==False:
+            mouse=pygame.mouse.get_pos()
+            mouse_cord=f"{int(mouse[0]//medida_casilla)}:{int(mouse[1]//medida_casilla)}"
+            boton=pygame.mouse.get_pressed()
+            
+            if boton[0]==True and ficha_seleccionada==None:#primer click
 
-            for pieza in lista_fichas:#para cada ficha de la lista de fichas
-                if pieza.rect.collidepoint(mouse):#si ese click colisiona con una ficha
-                    ficha_seleccionada=pieza#la ficha seleccionada es la colisionada
+                for pieza in lista_fichas:#para cada ficha de la lista de fichas
+                    if pieza.rect.collidepoint(mouse):#si ese click colisiona con una ficha
+                        ficha_seleccionada=pieza#la ficha seleccionada es la colisionada
+                        if ficha_seleccionada.color=="blanco":
+                            lista_turno_actual=lista_blancas
+                            Lista_rival_actual=lista_negras
+                        else:
+                            lista_turno_actual=lista_negras
+                            Lista_rival_actual=lista_blancas
+
+                        lista_posiciones_fichas_actuales=[]
+                        lista_posiciones_fichas_rivales=[]
+
+                        for _ficha_ in lista_fichas:
+                            if _ficha_ in lista_turno_actual:
+                                lista_posiciones_fichas_actuales.append(f"{_ficha_.columna}:{_ficha_.fila}")
+                            else:
+                                lista_posiciones_fichas_rivales.append(f"{_ficha_.columna}:{_ficha_.fila}")
+
+                        lista_opciones=ficha_seleccionada.restricciones(True)
+                        if ficha_seleccionada.tipo!="caballo" and ficha_seleccionada.tipo!="peon" and ficha_seleccionada.tipo!="rey":
+                            lista_opciones=cords_atravesadas_bot(lista_opciones,lista_posiciones_fichas_rivales,lista_posiciones_fichas_actuales,ficha_seleccionada)
+                        elif ficha_seleccionada.tipo=="caballo":
+                            lista_opciones=eliminar_cords_no_validas2(lista_posiciones_fichas_actuales)
+                            lista_opciones=eliminar_cords_ocupadas_caballo(lista_opciones,lista_posiciones_fichas_actuales)
+
+                        elif ficha_seleccionada.tipo=="rey":
+                            lista_opciones=movimiento_rey(lista_posiciones_fichas_actuales,lista_opciones)
+                        else:
+                            lista_opciones=eliminar_cords_no_validas2(lista_opciones)
+                            lista_opciones=movimiento_peon(ficha_seleccionada,lista_posiciones_fichas_rivales,lista_posiciones_fichas_actuales,lista_opciones)
+
+
+
+
+                        print(lista_opciones,"         lista opciones")
+                        pos_ox=ficha_seleccionada.rect.x+medida_casilla/4
+                        pos_oy=ficha_seleccionada.rect.y+medida_casilla/2
+                        pos_original_fila=ficha_seleccionada.fila#fila original
+                        pos_original_columna=ficha_seleccionada.columna#columna original
+
+                        if ficha_seleccionada.tipo=="peon":
+                            lista_comparar=lista_opciones.copy()
+                            nueva=matar_peon(ficha_seleccionada,lista_fichas)
+                            lista_opciones+=nueva
+        #ficha_selec,lista_opciones_ficha_selec,lista_fichas
+                            #print(lista_opciones,"::::::::segunda version lista opciones::::::lista_opciones::::::::::::::::::::")
+                            #print(lista_comparar,"········primera version lista opciones············lista_coparar·························")
+                        #print(lista_opciones,"lista opciones")
+
+
+                        break#salimos del for
+            if boton[0]==True and ficha_seleccionada!=None:
+                
+                base=mouse[0]-pos_ox
+                medida_linea=int(math.sqrt((mouse[0]-pos_ox)**2+(mouse[1]-pos_oy)**2))
+                #print(f"medida linea={medida_linea}")
+                
+
+                #pygame.draw.line(pantalla,(255,0,0),(pos_ox,pos_oy),(mouse),3)
+                arrastrando=True
+                ficha_seleccionada.mover()
+                ##guardamos todas sus coordenadas posibles de movimiento
+                
+                #si es peon creamos la lista nueva
+                
+            if boton[0]==False and ficha_seleccionada!=None:#soltamos el boton
+                colocado=False
+                cords_atravesadas=[]
+                x_recorridas=[]
+                y_recorridas=[]
+                ultima_cord_mouse=(int(mouse[0]//medida_casilla),int(mouse[1]//medida_casilla))
+                pos_ox=int(pos_ox//medida_casilla)#posicion orginal X
+                pos_oy=int(pos_oy//medida_casilla)#posicion original Y
+                cordenada_inicial=f"{pos_ox}:{pos_oy}"#cordenada inicial
+                cordenada_final=f"{ultima_cord_mouse[0]}:{ultima_cord_mouse[1]}"#cordenada final
+                cords_atravesadas=casillas_recorridas(cordenada_inicial,cordenada_final)#uso la funcion casillas_recorridas para obtener las coordenadas atravesadas
+
+                #print(cords_atravesadas,"cords atravesadas")
+                
+                if turno%2==0:
+                    color="blanco"
+                else:
+                    color="negro"
+
+
+        #__________________________________________________________________________________
+                cord_columna=int(mouse[0]//medida_casilla)
+                cord_fila=int(mouse[1]//medida_casilla)
+                coordenada_destino = f"{cord_columna}:{cord_fila}"
+                if 0<=cord_columna<=7 and 0<=cord_fila<=7 and ficha_seleccionada.color==color:
+                    casilla_ocupada=False
                     
-                    if ficha_seleccionada.tipo=="peon" and f"{ficha_seleccionada.columna}:{ficha_seleccionada.fila}" in ["0:1","1:1","2:1","3:1","4:1","5:1","6:1","7:1","0:6","1:6","2:6","3:6","4:6","5:6","6:6","7:6",]:
-                        lista_opciones=ficha_seleccionada.restricciones(True)#metemos las coordenadas enla lisya de reestricciones
+                    if ficha_seleccionada.tipo!="caballo":
+                        for cord in cords_atravesadas:
+                            for pieza in lista_fichas:
+                                if f"{pieza.columna}:{pieza.fila}"==cord:
+                                    ficha_seleccionada.columna=pos_original_columna
+                                    ficha_seleccionada.fila=pos_original_fila
+                                    ficha_seleccionada.actualizar(medida_casilla)
+                                    casilla_ocupada=True
+                                    break
+
+                    
+                    
+                    for pieza in lista_fichas:
+                        if pieza.columna==cord_columna and pieza.fila==cord_fila and ficha_seleccionada.color==pieza.color:
+                            ficha_seleccionada.columna=pos_original_columna
+                            ficha_seleccionada.fila=pos_original_fila
+                            ficha_seleccionada.actualizar(medida_casilla)
+                            casilla_ocupada=True
+                            #print("rechazado 1")
+                            break
+                            
+                        if pieza.columna==cord_columna and pieza.fila==cord_fila and ficha_seleccionada.color!=pieza.color and ficha_seleccionada.tipo!="peon" and coordenada_destino in lista_opciones:
+                            
+                            ficha_seleccionada.columna=pieza.columna
+                            ficha_seleccionada.fila=pieza.fila
+        
+                            pieza.columna=int(diccionario_posiciones_muertas[turno%2][pieza.tipo][0])
+                            pieza.fila=int(diccionario_posiciones_muertas[turno%2][pieza.tipo][2])
+                            lista_fichas_muertas.add(pieza)     
+                            lista_fichas.remove(pieza)
+                            
+                            ficha_seleccionada.actualizar(medida_casilla)
+                            colocado=True
+                            break
+
+                        #peones   v
+                        if pieza.columna==cord_columna and pieza.fila==cord_fila and ficha_seleccionada.color!=pieza.color and ficha_seleccionada.tipo=="peon" and coordenada_destino in lista_opciones and coordenada_destino not in lista_comparar:
+                            ficha_seleccionada.columna=pieza.columna
+                            ficha_seleccionada.fila=pieza.fila
+                            
+                            pieza.columna=int(diccionario_posiciones_muertas[turno%2][pieza.tipo][0])
+                            pieza.fila=int(diccionario_posiciones_muertas[turno%2][pieza.tipo][2])
+                            lista_fichas_muertas.add(pieza)
+                            lista_fichas.remove(pieza)
+                                                    
+                            ficha_seleccionada.actualizar(medida_casilla)
+                            colocado=True
+                            break
+
+
+                        if pieza.columna==cord_columna and pieza.fila==cord_fila and ficha_seleccionada.color!=pieza.color and ficha_seleccionada.tipo=="peon" and coordenada_destino in lista_comparar and coordenada_destino in lista_opciones:
+
+                            ficha_seleccionada.columna=pos_original_columna
+                            ficha_seleccionada.fila=pos_original_fila
+                            ficha_seleccionada.actualizar(medida_casilla)
+                            casilla_ocupada=True
+                            #print("rechazado 2")
+                            break
+
+
+
+                    if casilla_ocupada==False and coordenada_destino in lista_opciones :
+                        ficha_seleccionada.columna=cord_columna
+                        ficha_seleccionada.fila=cord_fila
+                        ficha_seleccionada.actualizar(medida_casilla)
+                        colocado=True
+                        #print("ha entrado ")
+
                     else:
-                        lista_opciones=ficha_seleccionada.restricciones(False)
-
-                    pos_ox=ficha_seleccionada.rect.x+medida_casilla/4
-                    pos_oy=ficha_seleccionada.rect.y+medida_casilla/2
-                    pos_original_fila=ficha_seleccionada.fila#fila original
-                    pos_original_columna=ficha_seleccionada.columna#columna original
-
-                    if ficha_seleccionada.tipo=="peon":
-                        lista_comparar=lista_opciones.copy()
-                        nueva=matar_peon(ficha_seleccionada,lista_fichas)
-                        lista_opciones+=nueva
-    #ficha_selec,lista_opciones_ficha_selec,lista_fichas
-                        #print(lista_opciones,"::::::::segunda version lista opciones::::::lista_opciones::::::::::::::::::::")
-                        #print(lista_comparar,"········primera version lista opciones············lista_coparar·························")
-                    #print(lista_opciones,"lista opciones")
-
-
-                    break#salimos del for
-        if boton[0]==True and ficha_seleccionada!=None:
-            
-            base=mouse[0]-pos_ox
-            medida_linea=int(math.sqrt((mouse[0]-pos_ox)**2+(mouse[1]-pos_oy)**2))
-            #print(f"medida linea={medida_linea}")
-            
-
-            #pygame.draw.line(pantalla,(255,0,0),(pos_ox,pos_oy),(mouse),3)
-            arrastrando=True
-            ficha_seleccionada.mover()
-            ##guardamos todas sus coordenadas posibles de movimiento
-            
-            #si es peon creamos la lista nueva
-            
-        if boton[0]==False and ficha_seleccionada!=None:#soltamos el boton
-            colocado=False
-            cords_atravesadas=[]
-            x_recorridas=[]
-            y_recorridas=[]
-            ultima_cord_mouse=(int(mouse[0]//medida_casilla),int(mouse[1]//medida_casilla))
-            pos_ox=int(pos_ox//medida_casilla)#posicion orginal X
-            pos_oy=int(pos_oy//medida_casilla)#posicion original Y
-            cordenada_inicial=f"{pos_ox}:{pos_oy}"#cordenada inicial
-            cordenada_final=f"{ultima_cord_mouse[0]}:{ultima_cord_mouse[1]}"#cordenada final
-            cords_atravesadas=casillas_recorridas(cordenada_inicial,cordenada_final)#uso la funcion casillas_recorridas para obtener las coordenadas atravesadas
-
-            #print(cords_atravesadas,"cords atravesadas")
-            
-            if turno%2==0:
-                color="blanco"
-            else:
-                color="negro"
-
-
-    #__________________________________________________________________________________
-            cord_columna=int(mouse[0]//medida_casilla)
-            cord_fila=int(mouse[1]//medida_casilla)
-            coordenada_destino = f"{cord_columna}:{cord_fila}"
-            if 0<=cord_columna<=7 and 0<=cord_fila<=7 and ficha_seleccionada.color==color:
-                casilla_ocupada=False
-                
-                if ficha_seleccionada.tipo!="caballo":
-                    for cord in cords_atravesadas:
-                        for pieza in lista_fichas:
-                            if f"{pieza.columna}:{pieza.fila}"==cord:
-                                ficha_seleccionada.columna=pos_original_columna
-                                ficha_seleccionada.fila=pos_original_fila
-                                ficha_seleccionada.actualizar(medida_casilla)
-                                casilla_ocupada=True
-                                break
-
-                
-                
-                for pieza in lista_fichas:
-                    if pieza.columna==cord_columna and pieza.fila==cord_fila and ficha_seleccionada.color==pieza.color:
                         ficha_seleccionada.columna=pos_original_columna
                         ficha_seleccionada.fila=pos_original_fila
                         ficha_seleccionada.actualizar(medida_casilla)
-                        casilla_ocupada=True
-                        #print("rechazado 1")
-                        break
-                        
-                    if pieza.columna==cord_columna and pieza.fila==cord_fila and ficha_seleccionada.color!=pieza.color and ficha_seleccionada.tipo!="peon":
-                        
-                        ficha_seleccionada.columna=pieza.columna
-                        ficha_seleccionada.fila=pieza.fila
-    
-                        pieza.columna=int(diccionario_posiciones_muertas[turno%2][pieza.tipo][0])
-                        pieza.fila=int(diccionario_posiciones_muertas[turno%2][pieza.tipo][2])
-                        lista_fichas_muertas.add(pieza)     
-                        lista_fichas.remove(pieza)
-                        
-                        ficha_seleccionada.actualizar(medida_casilla)
-                        colocado=True
-                        break
-
-                    #peones   v
-                    if pieza.columna==cord_columna and pieza.fila==cord_fila and ficha_seleccionada.color!=pieza.color and ficha_seleccionada.tipo=="peon" and coordenada_destino in lista_opciones and coordenada_destino not in lista_comparar:
-                        ficha_seleccionada.columna=pieza.columna
-                        ficha_seleccionada.fila=pieza.fila
-                        
-                        pieza.columna=int(diccionario_posiciones_muertas[turno%2][pieza.tipo][0])
-                        pieza.fila=int(diccionario_posiciones_muertas[turno%2][pieza.tipo][2])
-                        lista_fichas_muertas.add(pieza)
-                        lista_fichas.remove(pieza)
-                                                
-                        ficha_seleccionada.actualizar(medida_casilla)
-                        colocado=True
-                        break
-
-
-                    if pieza.columna==cord_columna and pieza.fila==cord_fila and ficha_seleccionada.color!=pieza.color and ficha_seleccionada.tipo=="peon" and coordenada_destino in lista_comparar and coordenada_destino in lista_opciones:
-
-                        ficha_seleccionada.columna=pos_original_columna
-                        ficha_seleccionada.fila=pos_original_fila
-                        ficha_seleccionada.actualizar(medida_casilla)
-                        casilla_ocupada=True
-                        #print("rechazado 2")
-                        break
-
-
-
-                if casilla_ocupada==False and coordenada_destino in lista_opciones :
-                    ficha_seleccionada.columna=cord_columna
-                    ficha_seleccionada.fila=cord_fila
-                    ficha_seleccionada.actualizar(medida_casilla)
-                    colocado=True
-                    #print("ha entrado ")
+                        #print("rechazado 3")
 
                 else:
                     ficha_seleccionada.columna=pos_original_columna
                     ficha_seleccionada.fila=pos_original_fila
                     ficha_seleccionada.actualizar(medida_casilla)
-                    #print("rechazado 3")
-
-            else:
-                ficha_seleccionada.columna=pos_original_columna
-                ficha_seleccionada.fila=pos_original_fila
-                ficha_seleccionada.actualizar(medida_casilla)
-                #print("rechazado 4")
-            ficha_seleccionada=None
-            arrastrando=False
+                    #print("rechazado 4")
+                ficha_seleccionada=None
+                arrastrando=False
 
 
-            if colocado==True:
+                if colocado==True:
+                    turno+=1
+
+        elif bot_==True and (turno%2==1 and color_bot=="negro" or turno%2==0 and color_bot=="blanco"):
+
+    #lista_opciones_finales.append({"atacante":ficha_bot_actual,"victima":victima_cord,"valor jugada":valor_jugada,"lista rival":lista_rival})
+
+            objetivo=bot(lista_fichas,lista_casillas_ocupadas,color_bot,medida_casilla)
+            cordenada_objetivo=objetivo["victima"]
+            #print(cordenada_objetivo,"  cordenada mandada por la funcion bot para colocar la ficha")
+            eliminar_ficha_rival=False
+            ficha_bot=objetivo["atacante"]
+            #print(ficha_bot.tipo," tipo ficha bot")
+            ficha_objetivo=None
+            #print(ficha_objetivo, "    despues del None")
+            for ficha_rival in objetivo["lista rival"]:
+                if f"{ficha_rival.columna}:{ficha_rival.fila}"==cordenada_objetivo:
+                    eliminar_ficha_rival=True
+                    ficha_objetivo=ficha_rival
+            
+            if eliminar_ficha_rival==True:#matar
+                ficha_animacion_activa=ficha_bot
+                cordenada_objetivo=f"{((float(objetivo['victima'][0]))*medida_casilla)+(medida_casilla/4)}:{float(objetivo['victima'][2])*medida_casilla}"
+                cordenada_objetivo_reducida=f"{int(objetivo['victima'][0])}:{int(objetivo['victima'][2])}"
+                animacion=True
+                
+                cordenada_actual=f"{ficha_animacion_activa.rect.x}:{ficha_animacion_activa.rect.y}"
+                num_x,num_y=movimiento_realista(cordenada_actual,cordenada_objetivo,medida_casilla)
+                
+                ficha_objetivo.columna=int(diccionario_posiciones_muertas[turno%2][ficha_objetivo.tipo][0])
+                ficha_objetivo.fila=int(diccionario_posiciones_muertas[turno%2][ficha_objetivo.tipo][2])
+                lista_fichas_muertas.add(ficha_objetivo)
+                lista_fichas.remove(ficha_objetivo)
+                ficha_animacion_activa=ficha_bot
                 turno+=1
 
-    elif bot_==True and (turno%2==1 and color_bot=="negro" or turno%2==0 and color_bot=="blanco"):
+                num_turnos_bot+=1
 
-#lista_opciones_finales.append({"atacante":ficha_bot_actual,"victima":victima_cord,"valor jugada":valor_jugada,"lista rival":lista_rival})
+            else:#no matar
+                ficha_animacion_activa=ficha_bot
+                cordenada_objetivo=f"{((float(objetivo['victima'][0]))*medida_casilla)+(medida_casilla/4)}:{float(objetivo['victima'][2])*medida_casilla}"
+                cordenada_objetivo_reducida=f"{int(objetivo['victima'][0])}:{int(objetivo['victima'][2])}"
+                animacion=True
+                
+                cordenada_actual=f"{float(ficha_animacion_activa.rect.x)}:{float(ficha_animacion_activa.rect.y)}"
+                num_x,num_y=movimiento_realista(cordenada_actual,cordenada_objetivo,medida_casilla)
+                
+                turno+=1
 
-        objetivo=bot(lista_fichas,lista_casillas_ocupadas,color_bot,medida_casilla)
-        cordenada_objetivo=objetivo["victima"]
-        #print(cordenada_objetivo,"  cordenada mandada por la funcion bot para colocar la ficha")
-        eliminar_ficha_rival=False
-        ficha_bot=objetivo["atacante"]
-        #print(ficha_bot.tipo," tipo ficha bot")
-        ficha_objetivo=None
-        #print(ficha_objetivo, "    despues del None")
-        for ficha_rival in objetivo["lista rival"]:
-            if f"{ficha_rival.columna}:{ficha_rival.fila}"==cordenada_objetivo:
-                eliminar_ficha_rival=True
-                ficha_objetivo=ficha_rival
-        
-        if eliminar_ficha_rival==True:#matar
-            ficha_bot.columna=ficha_objetivo.columna
-            ficha_bot.fila=ficha_objetivo.fila
-            
-            ficha_objetivo.columna=int(diccionario_posiciones_muertas[turno%2][ficha_objetivo.tipo][0])
-            ficha_objetivo.fila=int(diccionario_posiciones_muertas[turno%2][ficha_objetivo.tipo][2])
-            lista_fichas_muertas.add(ficha_objetivo)
-            lista_fichas.remove(ficha_objetivo)
-            ficha_bot.actualizar(medida_casilla)
-            turno+=1
-
-        else:#no matar
-            ficha_bot.columna=int(objetivo["victima"][0])
-            ficha_bot.fila=int(objetivo["victima"][2])
-            ficha_bot.actualizar(medida_casilla)
-            turno+=1
+                num_turnos_bot+=1
 
 
 
-
-
-
-    
     #dibujar tablero
     y=0
     x=0
-#_____________________________________________________________________________________________
-    
 
-    
     if arrastrando==False:
         for pieza in lista_fichas:
-            pieza.actualizar(medida_casilla)
-        peon_negro.actualizar(medida_casilla)
-        
-        
+            if pieza!=ficha_animacion_activa:
+                pieza.actualizar(medida_casilla)
 
+
+#_________________________________________________________________________________________________
+        #movimiento_realista(cord_a,cord_b,medida_casilla)
+        
+    if ficha_animacion_activa!=None:
+        if simplificar_cord(f"{ficha_animacion_activa.rect.x}:{ficha_animacion_activa.rect.y}",medida_casilla)!=cordenada_objetivo_reducida:
+            ficha_animacion_activa.rect.x+=num_x
+            ficha_animacion_activa.rect.y+=num_y
+            pantalla.blit(ficha_animacion_activa.image,ficha_animacion_activa.rect)
+
+        else:
+            ficha_animacion_activa.columna=int(cordenada_objetivo_reducida[0])
+            ficha_animacion_activa.fila=int(cordenada_objetivo_reducida[2])
+            ficha_animacion_activa.actualizar(medida_casilla)
+
+            ficha_animacion_activa=None
+            cordenada_objetivo=None
+            animacion=False
+    
+        
+#____________________________________________________________________________________________________________________________
+    
+    
     pantalla.blit(alfombra,(ancho_tablero-(ancho_tablero/5),0))
 
     lista_fichas_muertas.draw(pantalla)
@@ -1286,13 +1375,10 @@ while jugando:
 
         pygame.draw.rect(pantalla, (0,0,0), (0,0,medida_casilla/4,medida_casilla/4),4)
 
-
-
-
     if len(lista_fichas_muertas)>0:
         for ficha_muerta in lista_fichas_muertas:
-            if ficha_muerta!=ficha_tocada:
-                ficha_muerta.actualizar(medida_casilla)
+            ficha_muerta.actualizar(medida_casilla)
+
 
     
     pantalla.blit(mesa_opciones.image,mesa_opciones.rect)
@@ -1342,18 +1428,33 @@ while jugando:
         elif c==3 and ficha_mesa!=ficha_tocada:
             ficha_mesa.actualizar_posicion_especifica(medida_casilla,cord_x+medida_casilla+(medida_casilla/10)*6,cord_y+((medida_casilla/4)*3)*3)#caballo
         
-        
-
-        
-        
         c+=1
 
 
     lista_fichas_mesa_actual.draw(pantalla)
 
-    clock.tick(60)
+    clock.tick(120)
 
+    
+    
+    #actualizar_mesa(self,mediada_casilla,x,y):
+    if animacion==True :
+        print("--------------------------------------")
+        print("animacion: ",animacion)
+        print("ficha animacion activa: ",ficha_animacion_activa,ficha_animacion_activa.tipo)
+        print("cordenada objetvo: ",cordenada_objetivo)
+        print("cordenada actual: ",cordenada_actual)
+        print("corenada objetivo reducida: ",cordenada_objetivo_reducida)
+        print("cord actual ficha reucida: ",simplificar_cord(f"{ficha_animacion_activa.rect.x}:{ficha_animacion_activa.rect.y}",medida_casilla))
+        print("sumatorio",num_x,num_y)
+        print("numero de movimiento bot:", num_turnos_bot)
+        print("--------------------------------------")
+
+    
+
+    
     pygame.display.flip()
+
 
 def menu():
     fondo=pygame.image.load("fondo.png")
