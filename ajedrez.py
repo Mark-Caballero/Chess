@@ -1032,6 +1032,7 @@ ficha_animacion_activa=None
 
 cordenada_objetivo=None
 cordenada_actual=None
+ficha_asesinada=None
 
 cordenada_objetivo_reducida=None
 
@@ -1348,10 +1349,16 @@ while jugando:
             ficha_animacion_activa.columna=int(cordenada_objetivo_reducida[0])
             ficha_animacion_activa.fila=int(cordenada_objetivo_reducida[2])
             ficha_animacion_activa.actualizar(medida_casilla)
-
-            ficha_animacion_activa=None
-            cordenada_objetivo=None
-            animacion=False
+            if ficha_asesinada==None:
+                ficha_animacion_activa=None
+                cordenada_objetivo=None
+                animacion=False
+            else:
+                ficha_animacion_activa=ficha_asesinada
+                x_temporal=(int(diccionario_posiciones_muertas[ficha_animacion_activa.tipo][0])*medida_casilla)+(medida_casilla/4)
+                y_temporal=int(diccionario_posiciones_muertas[ficha_animacion_activa.tipo][2])*medida_casilla
+                cordenada_objetivo=f"{x_temporal}:{y_temporal}"
+                animacion=True
     
         
 #____________________________________________________________________________________________________________________________
