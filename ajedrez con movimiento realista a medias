@@ -121,16 +121,16 @@ def movimiento_peon(peon,lista_posiciones_equipo_rival,lista_posiciones_equipo_p
             lista_final.append(opcion)
 
     pos_peon=f"{peon.columna}:{peon.fila}"
-    
+    print("pos peon segun funcion movimiento peon   ",pos_peon)
     if peon.color=="negro" and pos_peon in ["0:1","1:1","2:1","3:1","4:1","5:1","6:1","7:1"] and f"{pos_peon[0]}:{int(pos_peon[2])+2}" not in lista_posiciones_equipo_rival and f"{pos_peon[0]}:{int(pos_peon[2])+1}" not in lista_posiciones_equipo_rival and f"{pos_peon[0]}:{int(pos_peon[2])+2}" not in lista_posiciones_equipo_peon and f"{pos_peon[0]}:{int(pos_peon[2])+1}" not in lista_posiciones_equipo_peon :
         lista_final.append(f"{peon.columna}:{peon.fila+2}")
             
     
     
-    elif peon.color=="blanco" and pos_peon in ["0:6","1:6","2:6","3:6","4:6","5:6","6:6","7:6"] and f"{pos_peon[0]}:{int(pos_peon[2])-2}" not in lista_posiciones_equipo_rival and f"{pos_peon[0]}:{int(pos_peon[2])-1}" not in lista_posiciones_equipo_rival and f"{pos_peon[0]}:{int(pos_peon[2])+2}" not in lista_posiciones_equipo_peon and f"{pos_peon[0]}:{int(pos_peon[2])+1}" not in lista_posiciones_equipo_peon :
+    elif peon.color=="blanco" and pos_peon in ["0:6","1:6","2:6","3:6","4:6","5:6","6:6","7:6"] and f"{pos_peon[0]}:{int(pos_peon[2])-2}" not in lista_posiciones_equipo_rival and f"{pos_peon[0]}:{int(pos_peon[2])-1}" not in lista_posiciones_equipo_rival and f"{pos_peon[0]}:{int(pos_peon[2])-2}" not in lista_posiciones_equipo_peon and f"{pos_peon[0]}:{int(pos_peon[2])-1}" not in lista_posiciones_equipo_peon :
         lista_final.append(f"{peon.columna}:{peon.fila-2}")
 
-
+    print("lista final por parte de funcion movimiento peon     ", lista_final)
 
     return lista_final
 
@@ -389,7 +389,7 @@ def bot(lista_fichas,lista_casillas_ocupadas,color,medida_casilla):
         #ficha_bot ataca a ficha rival
     for ficha_bot_actual in lista_bot:
         lista_opciones_ficha_bot_actual=[]
-        lista_opciones_ficha_bot_actual=ficha_bot_actual.restricciones(True)
+        lista_opciones_ficha_bot_actual=ficha_bot_actual.restricciones(False)
         
 
         if ficha_bot_actual.tipo!="caballo" and ficha_bot_actual.tipo!="peon" and ficha_bot_actual.tipo!="rey":
@@ -425,7 +425,7 @@ def bot(lista_fichas,lista_casillas_ocupadas,color,medida_casilla):
                     for ficha_rival in lista_rival:
                         ataque_con_consecuencias=False
                         lista_opciones_ficha_rival_actual=[]
-                        lista_opciones_ficha_rival_actual=ficha_rival.restricciones(True)
+                        lista_opciones_ficha_rival_actual=ficha_rival.restricciones(False)
 
                         if ficha_rival.tipo!="caballo" and ficha_rival.tipo!="peon" and ficha_rival.tipo!="rey":
                             lista_opciones_ficha_rival_actual=cords_atravesadas_bot(lista_opciones_ficha_rival_actual,lista_posiciones_bots,lista_posiciones_rivales,ficha_rival)
@@ -463,7 +463,7 @@ def bot(lista_fichas,lista_casillas_ocupadas,color,medida_casilla):
                     for ficha_rival_ in lista_rival:
                         cordenada_peligrosa=False
                         lista_opciones_ficha_rival_=[]
-                        lista_opciones_ficha_rival_=ficha_rival_.restricciones(True)
+                        lista_opciones_ficha_rival_=ficha_rival_.restricciones(False)
                         if ficha_rival_.tipo!="caballo" and ficha_rival_.tipo!="peon" and ficha_rival_.tipo!="rey":
                             lista_opciones_ficha_rival_=cords_atravesadas_bot(lista_opciones_ficha_rival_,lista_posiciones_bots,lista_posiciones_rivales,ficha_rival_)
                         elif ficha_rival_.tipo=="caballo":
@@ -493,7 +493,7 @@ def bot(lista_fichas,lista_casillas_ocupadas,color,medida_casilla):
         pos_ficha_bot_actual=f"{ficha_bot_actual.columna}:{ficha_bot_actual.fila}"
         #RIVAL
         for posible_ficha_atacante in lista_rival:
-            lista_opciones_posible_ficha_atacante=posible_ficha_atacante.restricciones(True)
+            lista_opciones_posible_ficha_atacante=posible_ficha_atacante.restricciones(False)
 
             if posible_ficha_atacante.tipo!="caballo" and posible_ficha_atacante.tipo!="peon" and posible_ficha_atacante.tipo!="rey":
                 lista_opciones_posible_ficha_atacante=cords_atravesadas_bot(lista_opciones_posible_ficha_atacante,lista_posiciones_bots,lista_posiciones_rivales,posible_ficha_atacante)
@@ -512,7 +512,7 @@ def bot(lista_fichas,lista_casillas_ocupadas,color,medida_casilla):
             
             for cordenada_posible in lista_opciones_posible_ficha_atacante:
                 if pos_ficha_bot_actual==cordenada_posible:
-                    lista_opciones_escapar_ficha_bot=ficha_bot_actual.restricciones(True)
+                    lista_opciones_escapar_ficha_bot=ficha_bot_actual.restricciones(False)
                     
                     if ficha_bot_actual.tipo!="caballo" and ficha_bot_actual.tipo!="peon" and ficha_bot_actual.tipo!="rey":
                         lista_opciones_escapar_ficha_bot=cords_atravesadas_bot(lista_opciones_escapar_ficha_bot,lista_posiciones_rivales,lista_posiciones_bots,ficha_bot_actual)
@@ -532,7 +532,7 @@ def bot(lista_fichas,lista_casillas_ocupadas,color,medida_casilla):
                     lista_cordenadas_amenazadas=[]
 
                     for ficha_rival3 in lista_rival:
-                        lista_opciones_ficha_rival3=ficha_rival3.restricciones(True)
+                        lista_opciones_ficha_rival3=ficha_rival3.restricciones(False)
                     
                         if ficha_rival3.tipo!="caballo" and ficha_rival3.tipo!="peon" and ficha_rival3.tipo!="rey":
                             lista_opciones_ficha_rival3=cords_atravesadas_bot(lista_opciones_ficha_rival3,lista_posiciones_bots,lista_posiciones_rivales,ficha_rival3)
@@ -569,7 +569,7 @@ def bot(lista_fichas,lista_casillas_ocupadas,color,medida_casilla):
         for ficha_bot in lista_bot:
 
         
-            lista_opciones_ficha_bot=ficha_bot.restricciones(True)
+            lista_opciones_ficha_bot=ficha_bot.restricciones(False)
             if ficha_bot.tipo!="caballo" and ficha_bot.tipo!="peon" and ficha_bot.tipo!="rey":
                 lista_opciones_ficha_bot=cords_atravesadas_bot(lista_opciones_ficha_bot,lista_posiciones_rivales,lista_posiciones_bots,ficha_bot)
             elif ficha_bot.tipo=="caballo":
@@ -587,7 +587,7 @@ def bot(lista_fichas,lista_casillas_ocupadas,color,medida_casilla):
                 for cord in lista_opciones_ficha_bot:
                     lista_escoger=[]
                     for ficha_rival3 in lista_rival:
-                        ficha_rival3_opciones=ficha_rival3.restricciones(True)
+                        ficha_rival3_opciones=ficha_rival3.restricciones(False)
                         if ficha_rival3.tipo!="caballo" and ficha_rival3.tipo!="peon" and ficha_rival3.tipo!="rey":
                             ficha_rival3_opciones=cords_atravesadas_bot(ficha_rival3_opciones,lista_posiciones_bots,lista_posiciones_rivales,ficha_rival3)
                         elif ficha_rival3.tipo=="caballo":
@@ -610,7 +610,7 @@ def bot(lista_fichas,lista_casillas_ocupadas,color,medida_casilla):
         if len(lista_opciones_finales)==0:
             
             for ficha_bot_ in lista_bot:
-                lista_opciones_ficha_bot_=ficha_bot_.restricciones(True)
+                lista_opciones_ficha_bot_=ficha_bot_.restricciones(False)
 
                 if ficha_bot_.tipo!="caballo" and ficha_bot_.tipo!="peon" and ficha_bot_.tipo!="rey":
                     lista_opciones_ficha_bot_=cords_atravesadas_bot(lista_opciones_ficha_bot_,lista_posiciones_rivales,lista_posiciones_bots,ficha_bot_)
@@ -1032,11 +1032,24 @@ ficha_animacion_activa=None
 
 cordenada_objetivo=None
 cordenada_actual=None
+ficha_asesinada=None
 
 cordenada_objetivo_reducida=None
 
 
 num_turnos_bot=0
+
+lista_blancas=pygame.sprite.Group()
+lista_negras=pygame.sprite.Group()
+for ficha_actual in lista_fichas:
+    if ficha_actual.color=="blanco":
+        lista_blancas.add(ficha_actual)
+    else:
+        lista_negras.add(ficha_actual)
+
+
+lista_turno_actual=None
+Lista_rival_actual=None
 #::::::::::::::::::::::↓INICIO WHILE↓::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 jugando=True
 while jugando:
@@ -1087,12 +1100,37 @@ while jugando:
                 for pieza in lista_fichas:#para cada ficha de la lista de fichas
                     if pieza.rect.collidepoint(mouse):#si ese click colisiona con una ficha
                         ficha_seleccionada=pieza#la ficha seleccionada es la colisionada
-                        
-                        if ficha_seleccionada.tipo=="peon" and f"{ficha_seleccionada.columna}:{ficha_seleccionada.fila}" in ["0:1","1:1","2:1","3:1","4:1","5:1","6:1","7:1","0:6","1:6","2:6","3:6","4:6","5:6","6:6","7:6",]:
-                            lista_opciones=ficha_seleccionada.restricciones(True)#metemos las coordenadas enla lisya de reestricciones
+                        if ficha_seleccionada.color=="blanco":
+                            lista_turno_actual=lista_blancas
+                            Lista_rival_actual=lista_negras
                         else:
-                            lista_opciones=ficha_seleccionada.restricciones(False)
+                            lista_turno_actual=lista_negras
+                            Lista_rival_actual=lista_blancas
 
+                        lista_posiciones_fichas_actuales=[]
+                        lista_posiciones_fichas_rivales=[]
+
+                        for _ficha_ in lista_fichas:
+                            if _ficha_ in lista_turno_actual:
+                                lista_posiciones_fichas_actuales.append(f"{_ficha_.columna}:{_ficha_.fila}")
+                            else:
+                                lista_posiciones_fichas_rivales.append(f"{_ficha_.columna}:{_ficha_.fila}")
+
+                        lista_opciones=ficha_seleccionada.restricciones(False)
+                        if ficha_seleccionada.tipo!="caballo" and ficha_seleccionada.tipo!="peon" and ficha_seleccionada.tipo!="rey":
+                            lista_opciones=cords_atravesadas_bot(lista_opciones,lista_posiciones_fichas_rivales,lista_posiciones_fichas_actuales,ficha_seleccionada)
+                    
+
+                        elif ficha_seleccionada.tipo=="rey":
+                            lista_opciones=movimiento_rey(lista_posiciones_fichas_actuales,lista_opciones)
+                        else:
+                            lista_opciones=eliminar_cords_no_validas2(lista_opciones)
+                            lista_opciones=movimiento_peon(ficha_seleccionada,lista_posiciones_fichas_rivales,lista_posiciones_fichas_actuales,lista_opciones)
+
+
+
+
+                        print(lista_opciones,"         lista opciones")
                         pos_ox=ficha_seleccionada.rect.x+medida_casilla/4
                         pos_oy=ficha_seleccionada.rect.y+medida_casilla/2
                         pos_original_fila=ficha_seleccionada.fila#fila original
@@ -1102,10 +1140,7 @@ while jugando:
                             lista_comparar=lista_opciones.copy()
                             nueva=matar_peon(ficha_seleccionada,lista_fichas)
                             lista_opciones+=nueva
-        #ficha_selec,lista_opciones_ficha_selec,lista_fichas
-                            #print(lista_opciones,"::::::::segunda version lista opciones::::::lista_opciones::::::::::::::::::::")
-                            #print(lista_comparar,"········primera version lista opciones············lista_coparar·························")
-                        #print(lista_opciones,"lista opciones")
+
 
 
                         break#salimos del for
@@ -1171,7 +1206,7 @@ while jugando:
                             #print("rechazado 1")
                             break
                             
-                        if pieza.columna==cord_columna and pieza.fila==cord_fila and ficha_seleccionada.color!=pieza.color and ficha_seleccionada.tipo!="peon":
+                        if pieza.columna==cord_columna and pieza.fila==cord_fila and ficha_seleccionada.color!=pieza.color and ficha_seleccionada.tipo!="peon" and coordenada_destino in lista_opciones:
                             
                             ficha_seleccionada.columna=pieza.columna
                             ficha_seleccionada.fila=pieza.fila
@@ -1186,7 +1221,7 @@ while jugando:
                             break
 
                         #peones   v
-                        if pieza.columna==cord_columna and pieza.fila==cord_fila and ficha_seleccionada.color!=pieza.color and ficha_seleccionada.tipo=="peon" and coordenada_destino in lista_opciones and coordenada_destino not in lista_comparar:
+                        if pieza.columna==cord_columna and pieza.fila==cord_fila and ficha_seleccionada.color!=pieza.color and ficha_seleccionada.tipo=="peon" and coordenada_destino in lista_opciones :
                             ficha_seleccionada.columna=pieza.columna
                             ficha_seleccionada.fila=pieza.fila
                             
@@ -1200,7 +1235,7 @@ while jugando:
                             break
 
 
-                        if pieza.columna==cord_columna and pieza.fila==cord_fila and ficha_seleccionada.color!=pieza.color and ficha_seleccionada.tipo=="peon" and coordenada_destino in lista_comparar and coordenada_destino in lista_opciones:
+                        if pieza.columna==cord_columna and pieza.fila==cord_fila and ficha_seleccionada.color!=pieza.color and ficha_seleccionada.tipo=="peon"  and coordenada_destino in lista_opciones:
 
                             ficha_seleccionada.columna=pos_original_columna
                             ficha_seleccionada.fila=pos_original_fila
@@ -1264,10 +1299,21 @@ while jugando:
                 
                 ficha_objetivo.columna=int(diccionario_posiciones_muertas[turno%2][ficha_objetivo.tipo][0])
                 ficha_objetivo.fila=int(diccionario_posiciones_muertas[turno%2][ficha_objetivo.tipo][2])
-                lista_fichas_muertas.add(ficha_objetivo)
-                lista_fichas.remove(ficha_objetivo)
+                
+                #___________________________________
+                
+                ficha_asesinada=ficha_objetivo
+
+                num_x_muerto=movimiento_realista(f"{(ficha_asesinada.rect.x*medida_casilla)+(medida_casilla/4)}:{ficha_asesinada.rect.y}",diccionario_posiciones_muertas[turno%2][ficha_asesinada.tipo],medida_casilla)
+                
+                #lista_fichas_muertas.add(ficha_objetivo)
+                #lista_fichas.remove(ficha_objetivo)
+
+                #___________________________________
+                
                 ficha_animacion_activa=ficha_bot
                 turno+=1
+                
 
                 num_turnos_bot+=1
 
@@ -1309,10 +1355,17 @@ while jugando:
             ficha_animacion_activa.columna=int(cordenada_objetivo_reducida[0])
             ficha_animacion_activa.fila=int(cordenada_objetivo_reducida[2])
             ficha_animacion_activa.actualizar(medida_casilla)
-
-            ficha_animacion_activa=None
-            cordenada_objetivo=None
-            animacion=False
+            if ficha_asesinada==None:
+                ficha_animacion_activa=None
+                cordenada_objetivo=None
+                animacion=False
+            else:
+                ficha_animacion_activa=ficha_asesinada
+                x_temporal=(int(diccionario_posiciones_muertas[turno%2][ficha_animacion_activa.tipo][0])*medida_casilla)+(medida_casilla/4)
+                y_temporal=int(diccionario_posiciones_muertas[turno%2][ficha_animacion_activa.tipo][2])*medida_casilla
+                cordenada_objetivo=f"{x_temporal}:{y_temporal}"
+                animacion=True
+                ficha_asesinada=None
     
         
 #____________________________________________________________________________________________________________________________
@@ -1389,10 +1442,6 @@ while jugando:
         elif c==3 and ficha_mesa!=ficha_tocada:
             ficha_mesa.actualizar_posicion_especifica(medida_casilla,cord_x+medida_casilla+(medida_casilla/10)*6,cord_y+((medida_casilla/4)*3)*3)#caballo
         
-        
-
-        
-        
         c+=1
 
 
@@ -1416,11 +1465,11 @@ while jugando:
         print("--------------------------------------")
 
     
+
+    
     pygame.display.flip()
 
 
 def menu():
-    fondo=pygame.image.load("fondo.png")
-    
     fondo=pygame.image.load("fondo.png")
     
