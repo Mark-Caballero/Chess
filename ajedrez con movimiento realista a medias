@@ -34,7 +34,7 @@ def casillas_recorridas(cordenada_inicial,cordenada_final):
 
     x_inicial,y_inicial=cordenada_inicial.split(":")
     x_inicial=int(x_inicial)
-    y_inicial=int(y_inicial)
+    y_inicial=int(y_inicial)  
 
     
     x_final,y_final=cordenada_final.split(":")
@@ -774,8 +774,8 @@ class ficha(pygame.sprite.Sprite):
         self.rect.x=self.columna*medida_casilla+altura/4
 
     def actualizar_posicion_logica(self):
-        self.fila = int((self.rect.y) // medida_casilla)
-        self.columna = int((self.rect.x - medida_casilla / 4) // medida_casilla)
+        self.fila=int((self.rect.y)//medida_casilla)
+        self.columna=int((self.rect.x-medida_casilla/4)//medida_casilla)
     def mover(self):
         mouse=pygame.mouse.get_pos()
         self.rect.center=(mouse[0],mouse[1])
@@ -872,6 +872,16 @@ class ficha(pygame.sprite.Sprite):
         self.rect.x=cord_x
         self.rect.y=cord_y
 
+    def actualizar_medida(self,medida_casilla):
+        self.image=self.original
+        self.image=pygame.transform.scale(self.image,(54*medida_casilla//100,medida_casilla))
+        x=self.rect.x
+        y=self.rect.y
+        self.rect=self.image.get_rect()
+        self.rect.x=x
+        self.rect.y=y
+        
+        
 #····················································································
 
 
@@ -1011,6 +1021,12 @@ lista_fichas_blancas_mesa.add(
 #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
+def posicion_dic(color_ficha):
+    if color=="blanco":
+        return 1
+    return 0#si es negro
+
+
 alfombra=pygame.image.load("alfombra.png").convert_alpha()
 alfombra=pygame.transform.scale(alfombra,(ancho_tablero/5,alto_tablero))
 ficha_seleccionada = None
@@ -1038,6 +1054,9 @@ cordenada_objetivo_reducida=None
 cordenada_actual_ficha_asesinada=None
 revisado=False
 num_turnos_bot=0
+
+variable_borrar=None
+
 
 lista_blancas=pygame.sprite.Group()
 lista_negras=pygame.sprite.Group()
@@ -1206,33 +1225,34 @@ while jugando:
                             #print("rechazado 1")
                             break
                             
-                        if pieza.columna==cord_columna and pieza.fila==cord_fila and ficha_seleccionada.color!=pieza.color and ficha_seleccionada.tipo!="peon" and coordenada_destino in lista_opciones:
+                        if pieza.columna==cord_columna and pieza.fila==cord_fila and ficha_seleccionada.color!=pieza.color  and coordenada_destino in lista_opciones:
                             
                             ficha_seleccionada.columna=pieza.columna
                             ficha_seleccionada.fila=pieza.fila
         
-                            pieza.columna=int(diccionario_posiciones_muertas[turno%2][pieza.tipo][0])
-                            pieza.fila=int(diccionario_posiciones_muertas[turno%2][pieza.tipo][2])
-                            lista_fichas_muertas.add(pieza)     
-                            lista_fichas.remove(pieza)
+                            #pieza.columna=int(diccionario_posiciones_muertas[turno%2][pieza.tipo][0])
+                            #pieza.fila=int(diccionario_posiciones_muertas[turno%2][pieza.tipo][2])
+                            #lista_fichas_muertas.add(pieza)     
+                            #lista_fichas.remove(pieza)
+                            
+
+                            ficha_animacion_activa=pieza
+                            cordenada_objetivo=f"{(int(diccionario_posiciones_muertas[turno%2][pieza.tipo][0])*medida_casilla)+(medida_casilla/4)}:{int(diccionario_posiciones_muertas[turno%2][pieza.tipo][2])*medida_casilla}"
+                            cordenada_objetivo_reducida=f"{int(diccionario_posiciones_muertas[turno%2][pieza.tipo][0])}:{int(diccionario_posiciones_muertas[turno%2][pieza.tipo][2])}"
+                            animacion=True
+                            
+                            cordenada_actual=f"{ficha_animacion_activa.rect.x}:{ficha_animacion_activa.rect.y}"
+                            num_x,num_y=movimiento_realista(cordenada_actual,cordenada_objetivo,medida_casilla)
+
+
+
+
+
                             
                             ficha_seleccionada.actualizar(medida_casilla)
                             colocado=True
                             break
 
-                        #peones   v
-                        if pieza.columna==cord_columna and pieza.fila==cord_fila and ficha_seleccionada.color!=pieza.color and ficha_seleccionada.tipo=="peon" and coordenada_destino in lista_opciones :
-                            ficha_seleccionada.columna=pieza.columna
-                            ficha_seleccionada.fila=pieza.fila
-                            
-                            pieza.columna=int(diccionario_posiciones_muertas[turno%2][pieza.tipo][0])
-                            pieza.fila=int(diccionario_posiciones_muertas[turno%2][pieza.tipo][2])
-                            lista_fichas_muertas.add(pieza)
-                            lista_fichas.remove(pieza)
-                                                    
-                            ficha_seleccionada.actualizar(medida_casilla)
-                            colocado=True
-                            break
 
 
                         if pieza.columna==cord_columna and pieza.fila==cord_fila and ficha_seleccionada.color!=pieza.color and ficha_seleccionada.tipo=="peon"  and coordenada_destino in lista_opciones:
@@ -1271,7 +1291,7 @@ while jugando:
                 if colocado==True:
                     turno+=1
 
-        elif bot_==True and (turno%2==1 and color_bot=="negro" or turno%2==0 and color_bot=="blanco"):
+        elif bot_==True and (turno%2==1 and color_bot=="negro" or turno%2==0 and color_bot=="blanco") and animacion==False and ficha_animacion_activa==None:
 
     #lista_opciones_finales.append({"atacante":ficha_bot_actual,"victima":victima_cord,"valor jugada":valor_jugada,"lista rival":lista_rival})
 
@@ -1302,11 +1322,7 @@ while jugando:
                 #___________________________________
                 
                 ficha_asesinada=ficha_objetivo
-                
-
-                
-                
-                
+            
                 #lista_fichas_muertas.add(ficha_objetivo)
                 #lista_fichas.remove(ficha_objetivo)
 
@@ -1350,6 +1366,7 @@ while jugando:
         if simplificar_cord(f"{ficha_animacion_activa.rect.x}:{ficha_animacion_activa.rect.y}",medida_casilla)!=cordenada_objetivo_reducida:
             ficha_animacion_activa.rect.x+=num_x
             ficha_animacion_activa.rect.y+=num_y
+            ficha_animacion_activa.actualizar_medida(medida_casilla)
             pantalla.blit(ficha_animacion_activa.image,ficha_animacion_activa.rect)
 
         else:
@@ -1361,6 +1378,7 @@ while jugando:
                     ficha_animacion_activa=None
                     cordenada_objetivo=None
                     animacion=False
+                    revisado=False
                 else:
                     ficha_animacion_activa=ficha_asesinada
                     cord_objetivo_x=int(diccionario_posiciones_muertas[(turno+1)%2][ficha_asesinada.tipo][0])*medida_casilla
@@ -1390,6 +1408,7 @@ while jugando:
                 ficha_animacion_activa=None
                 cordenada_objetivo=None
                 animacion=False
+                revisado=False
 
         
 #____________________________________________________________________________________________________________________________
@@ -1472,12 +1491,13 @@ while jugando:
 
     clock.tick(120)
 
-    
     #actualizar_mesa(self,mediada_casilla,x,y):
-    if animacion==True :
+    gg=False
+    if animacion==True and ficha_animacion_activa!=variable_borrar and gg==True:
+        variable_borrar=ficha_animacion_activa
         print("--------------------------------------")
         print("animacion: ",animacion)
-        print("ficha animacion activa: ",ficha_animacion_activa,ficha_animacion_activa.tipo)
+        print("ficha animacion activa: ",ficha_animacion_activa,ficha_animacion_activa.tipo,ficha_animacion_activa.color)
         print("cordenada objetvo: ",cordenada_objetivo)
         print("cordenada actual: ",cordenada_actual)
         print("corenada objetivo reducida: ",cordenada_objetivo_reducida)
@@ -1486,14 +1506,14 @@ while jugando:
         print("numero de movimiento bot:", num_turnos_bot)
         print("--------------------------------------")
 
-    print("||||||||||||||||||||||")
-    print(ficha_animacion_activa)
+    if ficha_animacion_activa!=i and gg==True:
+        
+        print(ficha_animacion_activa)
+        if ficha_animacion_activa!=None:
+            print(ficha_animacion_activa.tipo)
 
-    if ficha_animacion_activa!=None:
-        print(ficha_animacion_activa.tipo)
-
-    print("||||||||||||||||||||||")
-
+        i=ficha_animacion_activa
+        print("---------------")
 
     
     pygame.display.flip()
@@ -1501,4 +1521,7 @@ while jugando:
 
 def menu():
     fondo=pygame.image.load("fondo.png")
+
+
+#cuando hay una ficha rival en una posicion posible para el caballo, esta se borra y no deja moverlo ahi
     
