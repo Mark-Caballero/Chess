@@ -4,7 +4,7 @@ clock=pygame.time.Clock()
 import math
 
 
-medida_casilla=120
+medida_casilla=85
 casillas_por_fila=8
 
 ancho_tablero=medida_casilla*10
@@ -1109,7 +1109,7 @@ while jugando:
 
 #:::::::::::::MOVER FICHA::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     if animacion==False or animacion==True:
-        if ((turno%2==0 and color_humano=="blanco")or(turno%2==1 and color_humano=="negro")) or bot_==False:
+        if ((turno%2==0 and color_humano=="blanco")or(turno%2==1 and color_humano=="negro")) or bot_==False :
             mouse=pygame.mouse.get_pos()
             mouse_cord=f"{int(mouse[0]//medida_casilla)}:{int(mouse[1]//medida_casilla)}"
             boton=pygame.mouse.get_pressed()
@@ -1136,17 +1136,32 @@ while jugando:
                                 lista_posiciones_fichas_rivales.append(f"{_ficha_.columna}:{_ficha_.fila}")
 
                         lista_opciones=ficha_seleccionada.restricciones(False)
+                        ####
+                        if ficha_seleccionada.tipo=="torre":
+                            print(lista_opciones)
+                            print("------")
+                        ####
+
                         if ficha_seleccionada.tipo!="caballo" and ficha_seleccionada.tipo!="peon" and ficha_seleccionada.tipo!="rey":
                             lista_opciones=cords_atravesadas_bot(lista_opciones,lista_posiciones_fichas_rivales,lista_posiciones_fichas_actuales,ficha_seleccionada)
-                    
+                            
+                        #######
+                        if ficha_seleccionada.tipo=="torre":
+                            print(lista_opciones)
+                        #######
+
 
                         elif ficha_seleccionada.tipo=="rey":
                             lista_opciones=movimiento_rey(lista_posiciones_fichas_actuales,lista_opciones)
-                        else:
+                        elif ficha_seleccionada.tipo=="peon":
                             lista_opciones=eliminar_cords_no_validas2(lista_opciones)
                             lista_opciones=movimiento_peon(ficha_seleccionada,lista_posiciones_fichas_rivales,lista_posiciones_fichas_actuales,lista_opciones)
 
 
+                        ####
+                        if ficha_seleccionada.tipo=="torre":
+                            print("|||||||||||||||||||||||||||||")
+                        ####
 
 
                         #print(lista_opciones,"         lista opciones")
@@ -1523,5 +1538,5 @@ def menu():
     fondo=pygame.image.load("fondo.png")
 
 
-#cuando hay una ficha rival en una posicion posible para el caballo, esta se borra y no deja moverlo ahi
+#el bot usa fichas muertas para matar
     
