@@ -810,14 +810,14 @@ class ficha(pygame.sprite.Sprite):
                 lista_opciones.append(f"{self.columna-1*i}:{self.fila}")#vertical
         
         if self.tipo == "caballo":
-            lista_opciones.append(f"{self.columna + 1 * 2}:{self.fila + 1}")  # ↱
-            lista_opciones.append(f"{self.columna + 1 * 2}:{self.fila - 1}")  # ↰
-            lista_opciones.append(f"{self.columna - 1 * 2}:{self.fila + 1}")  # ↳
-            lista_opciones.append(f"{self.columna - 1 * 2}:{self.fila - 1}")  # ↲
-            lista_opciones.append(f"{self.columna + 1}:{self.fila + 1 * 2}")  # ⇗ ___|
-            lista_opciones.append(f"{self.columna - 1}:{self.fila + 1 * 2}")  # ⇘ ---↓
-            lista_opciones.append(f"{self.columna + 1}:{self.fila - 1 * 2}")  # ⇖ |___
-            lista_opciones.append(f"{self.columna - 1}:{self.fila - 1 * 2}")  # ⇙ ↓---
+            lista_opciones.append(f"{self.columna + 1 * 2}:{self.fila + 1}") 
+            lista_opciones.append(f"{self.columna + 1 * 2}:{self.fila - 1}") 
+            lista_opciones.append(f"{self.columna - 1 * 2}:{self.fila + 1}") 
+            lista_opciones.append(f"{self.columna - 1 * 2}:{self.fila - 1}") 
+            lista_opciones.append(f"{self.columna + 1}:{self.fila + 1 * 2}") 
+            lista_opciones.append(f"{self.columna - 1}:{self.fila + 1 * 2}")  
+            lista_opciones.append(f"{self.columna + 1}:{self.fila - 1 * 2}")   
+            lista_opciones.append(f"{self.columna - 1}:{self.fila - 1 * 2}")  
 
         if self.tipo == "alfil":
 
@@ -849,7 +849,7 @@ class ficha(pygame.sprite.Sprite):
             lista_opciones.append(f"{self.columna }:{self.fila - 1}")
             lista_opciones.append(f"{self.columna + 1}:{self.fila}")
             lista_opciones.append(f"{self.columna - 1}:{self.fila}")  
-
+        #print(lista_opciones,"    -/-/-")
         for cord in lista_opciones:
             if "-" in cord:
                 lista_opciones.remove(cord)
@@ -1137,17 +1137,19 @@ while jugando:
 
                         lista_opciones=ficha_seleccionada.restricciones(False)
                         ####
-                        if ficha_seleccionada.tipo=="torre":
-                            print(lista_opciones)
-                            print("------")
+                        #borrar=True
+                        #if ficha_seleccionada.tipo=="torre" or borrar==True:
+                            #print(lista_opciones)
+                            #print("------")
+                        
                         ####
 
                         if ficha_seleccionada.tipo!="caballo" and ficha_seleccionada.tipo!="peon" and ficha_seleccionada.tipo!="rey":
                             lista_opciones=cords_atravesadas_bot(lista_opciones,lista_posiciones_fichas_rivales,lista_posiciones_fichas_actuales,ficha_seleccionada)
-                            
+                            print(lista_opciones,"----------------")
                         #######
-                        if ficha_seleccionada.tipo=="torre":
-                            print(lista_opciones)
+                        #if ficha_seleccionada.tipo=="torre":
+                        #    print(lista_opciones)
                         #######
 
 
@@ -1159,8 +1161,8 @@ while jugando:
 
 
                         ####
-                        if ficha_seleccionada.tipo=="torre":
-                            print("|||||||||||||||||||||||||||||")
+                        #if ficha_seleccionada.tipo=="torre":
+                        #    print("|||||||||||||||||||||||||||||")
                         ####
 
 
@@ -1198,6 +1200,7 @@ while jugando:
                 x_recorridas=[]
                 y_recorridas=[]
                 ultima_cord_mouse=(int(mouse[0]//medida_casilla),int(mouse[1]//medida_casilla))
+                print(ultima_cord_mouse)
                 pos_ox=int(pos_ox//medida_casilla)#posicion orginal X
                 pos_oy=int(pos_oy//medida_casilla)#posicion original Y
                 cordenada_inicial=f"{pos_ox}:{pos_oy}"#cordenada inicial
@@ -1310,6 +1313,12 @@ while jugando:
 
     #lista_opciones_finales.append({"atacante":ficha_bot_actual,"victima":victima_cord,"valor jugada":valor_jugada,"lista rival":lista_rival})
 
+            
+            for ficha_bot_cord in lista_fichas:
+                if ficha_bot_cord.columna>7:
+                    lista_fichas_muertas.add(ficha_bot_cord)
+                    lista_fichas.remove(ficha_bot_cord)
+
             objetivo=bot(lista_fichas,lista_casillas_ocupadas,color_bot,medida_casilla)
             cordenada_objetivo=objetivo["victima"]
             #print(cordenada_objetivo,"  cordenada mandada por la funcion bot para colocar la ficha")
@@ -1317,6 +1326,10 @@ while jugando:
             ficha_bot=objetivo["atacante"]
             #print(ficha_bot.tipo," tipo ficha bot")
             ficha_objetivo=None
+
+
+
+
             #print(ficha_objetivo, "    despues del None")
             for ficha_rival in objetivo["lista rival"]:
                 if f"{ficha_rival.columna}:{ficha_rival.fila}"==cordenada_objetivo:
@@ -1401,16 +1414,16 @@ while jugando:
                     cord_objetivo_ficha_asesinada=f"{cord_objetivo_x}:{cord_objetivo_y}"
                     
                     num_x_muerto,num_y_muerto=movimiento_realista(f"{(ficha_asesinada.rect.x)}:{ficha_asesinada.rect.y}",cord_objetivo_ficha_asesinada,medida_casilla)
-                    print("cord onjetivo: ",cord_objetivo_ficha_asesinada)
+                    #print("cord onjetivo: ",cord_objetivo_ficha_asesinada)
 
 
 
                     
                     cordenada_objetivo_reducida=diccionario_posiciones_muertas[(turno+1)%2][ficha_animacion_activa.tipo]
-                    print("cord objetivo reducida:  ",cordenada_objetivo_reducida)
+                    #print("cord objetivo reducida:  ",cordenada_objetivo_reducida)
                     num_x=num_x_muerto
                     num_y=num_y_muerto
-                    print("sumatorio: ",num_x,":",num_y) 
+                    #print("sumatorio: ",num_x,":",num_y) 
                     
                     animacion=True
                     ficha_asesinada=None
@@ -1539,4 +1552,4 @@ def menu():
 
 
 #el bot usa fichas muertas para matar
-    
+#en caso de problemas con las cordenadas, el problema no estaria en la funcion restricciones
