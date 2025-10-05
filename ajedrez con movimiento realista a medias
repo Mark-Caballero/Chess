@@ -146,7 +146,7 @@ def ordenar_cords_lista(lista_cords_por_angulos,ficha_bot):
     #opcion 1= de menor a mayor
     #opcion 2= de mayor a menor
     for lista_cords in lista_cords_por_angulos:
-        if len(lista_cords)>1:
+        if len(lista_cords)>=1:
             if int(lista_cords[0][0])>x and int(lista_cords[0][2])<y:
                 opcion=1
                 operacion="-"
@@ -1027,6 +1027,8 @@ def posicion_dic(color_ficha):
     return 0#si es negro
 
 
+
+
 alfombra=pygame.image.load("alfombra.png").convert_alpha()
 alfombra=pygame.transform.scale(alfombra,(ancho_tablero/5,alto_tablero))
 ficha_seleccionada = None
@@ -1069,6 +1071,16 @@ for ficha_actual in lista_fichas:
 
 lista_turno_actual=None
 Lista_rival_actual=None
+
+#-mesa
+bajar_mesa=False
+mesa_colocada=False
+ficha_escogida_para_cambiar_tipo_color=None
+peon_cambiar=None
+clicado=False
+color_fichas_mesas=""
+pixeles_mover=0
+
 #::::::::::::::::::::::↓INICIO WHILE↓::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 jugando=True
 while jugando:
@@ -1465,33 +1477,92 @@ while jugando:
             ficha_muerta.actualizar(medida_casilla)
 
 
+    #------MESA---------
+    for posible_peon in lista_fichas:
+        if posible_peon.tipo=="peon" and (posible_peon.color=="blanco" and posible_peon.fila==0) or (posible_peon.color=="negro" and posible_peon.fila==7) :
+            bajar_mesa=True
+            colocado=False
+            
+
+        
+    if bajar_mesa==True and colocado==False and mesa_opciones.rect.y!=y_mesa_habilitada:
+        pixeles_mover+=1
     
+    else:
+        pixeles_mover=0
+
+
     pantalla.blit(mesa_opciones.image,mesa_opciones.rect)
-    
-    mesa_opciones.actualizar_mesa(medida_casilla,medida_casilla*7+medida_casilla/2,2*medida_casilla)
+    y_mesa_deshabilitada=-3*medida_casilla-(medida_casilla/3)*2
+
+    x_mesa=medida_casilla*7+medida_casilla/2
+    y_mesa_habilitada=2*medida_casilla
+
+
+    mesa_opciones.actualizar_mesa(medida_casilla,x_mesa,y_mesa_deshabilitada+pixeles_mover)
     
 
     if turno%2==0:
         lista_fichas_mesa_actual=lista_fichas_blancas_mesa
+        color_fichas_mesas="blanco"
+
     else:
         lista_fichas_mesa_actual=lista_fichas_negras_mesa
+        color_fichas_mesas="negro"
 
 
-    if ficha_tocada==None:
-        for ficha_mesa in lista_fichas_mesa_actual:
-            if ficha_mesa.rect.collidepoint(pygame.mouse.get_pos()):
-                ficha_tocada=ficha_mesa
-                ficha_tocada.agrandar()
-                tocando=True
-                break
+
+    #print(int(mouse[0]//medida_casilla),int(mouse[1]//medida_casilla))
+    #print(boton)
+
+
     
-    if tocando==True:
-        for ficha_ in lista_fichas_mesa_actual:
-            if ficha_.rect.collidepoint(pygame.mouse.get_pos())==False and ficha_==ficha_tocada:
-                ficha_.reducir()
-                tocando=False
-                ficha_tocada=None
-                break
+    if mesa_colocada==True:
+        if ficha_tocada==None:
+            for ficha_mesa in lista_fichas_mesa_actual:
+                if ficha_mesa.rect.collidepoint(pygame.mouse.get_pos()):
+                    ficha_tocada=ficha_mesa
+                    ficha_tocada.agrandar()
+                    tocando=True
+                    break
+        
+        if boton[0]==True and ficha_tocada!=None and clicado==False:
+            print("🟥🟥🟥")
+            mouse_simplificado=int(mouse[0]//medida_casilla),int(mouse[1]//medida_casilla)
+            print(mouse_simplificado)
+            
+            if mouse_simplificado==(8,3) or mouse_simplificado==(8,2):
+                ficha_escogida_para_cambiar_tipo_color="reina",color_fichas_mesas
+                print(ficha_escogida_para_cambiar_tipo_color)                
+            
+            elif mouse_simplificado==(9,3) or mouse_simplificado==(9,2):
+                ficha_escogida_para_cambiar_tipo_color="torre",color_fichas_mesas
+                print(ficha_escogida_para_cambiar_tipo_color)
+            
+            elif mouse_simplificado==(8,4) or mouse_simplificado==(8,5):
+                ficha_escogida_para_cambiar_tipo_color="alfil",color_fichas_mesas
+                print(ficha_escogida_para_cambiar_tipo_color)
+
+            elif mouse_simplificado==(9,4) or mouse_simplificado==(9,5):
+                ficha_escogida_para_cambiar_tipo_color="caballo",color_fichas_mesas
+                print(ficha_escogida_para_cambiar_tipo_color)
+            
+            
+            clicado=True
+
+            #ficha_escogida_para_cambiar_tipo_color=ficha_tocada.tipo,ficha_tocada.color
+            #print(ficha_escogida_para_cambiar_tipo_color)
+
+
+            
+        
+        if tocando==True:
+            for ficha_ in lista_fichas_mesa_actual:
+                if ficha_.rect.collidepoint(pygame.mouse.get_pos())==False and ficha_==ficha_tocada:
+                    ficha_.reducir()
+                    tocando=False
+                    ficha_tocada=None
+                    break
     
 
     
