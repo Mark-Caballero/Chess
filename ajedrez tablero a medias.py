@@ -1080,6 +1080,7 @@ peon_cambiar=None
 clicado=False
 color_fichas_mesas=""
 pixeles_mover=0
+comprobado=False
 
 #::::::::::::::::::::::↓INICIO WHILE↓::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 jugando=True
@@ -1212,7 +1213,7 @@ while jugando:
                 x_recorridas=[]
                 y_recorridas=[]
                 ultima_cord_mouse=(int(mouse[0]//medida_casilla),int(mouse[1]//medida_casilla))
-                print(ultima_cord_mouse)
+                #print(ultima_cord_mouse)
                 pos_ox=int(pos_ox//medida_casilla)#posicion orginal X
                 pos_oy=int(pos_oy//medida_casilla)#posicion original Y
                 cordenada_inicial=f"{pos_ox}:{pos_oy}"#cordenada inicial
@@ -1478,8 +1479,9 @@ while jugando:
 
 
     #------MESA---------
-    for posible_peon in lista_fichas:
-        if posible_peon.tipo=="peon" and posible_peon.columna not in [8,9] and (posible_peon.color=="blanco" and posible_peon.fila==0) or (posible_peon.color=="negro" and posible_peon.fila==7) :
+    for posible_peon in lista_fichas :
+        if (posible_peon.tipo == "peon" and posible_peon.columna not in [8,9] and ((posible_peon.color == "blanco" and posible_peon.fila == 0) or (posible_peon.color == "negro" and posible_peon.fila == 7))):
+            print("🟨")
             movimiento_mesa=True
             mesa_colocada=False
 
@@ -1493,19 +1495,21 @@ while jugando:
             
     x_mesa=medida_casilla*7+medida_casilla/2
     y_mesa_habilitada=2*medida_casilla
+    pixeles_mover=medida_casilla/medida_casilla
 
-
+    print((mesa_opciones.rect.y+(medida_casilla/2))//medida_casilla,"   fila")
     if movimiento_mesa==True:
-        if mesa_opciones.rect.y//medida_casilla==2:
+        
+        if (mesa_opciones.rect.y+(medida_casilla/2))//medida_casilla==2:
             mesa_colocada=True
 
         if mesa_colocada==True:
             mesa_opciones.actualizar_mesa(medida_casilla,x_mesa,y_mesa_habilitada)
         elif mesa_colocada==False:
-            mesa_opciones.actualizar_mesa(medida_casilla,x_mesa,y_mesa_habilitada+pixeles_mover)
+            mesa_opciones.actualizar_mesa(medida_casilla,x_mesa,y_mesa_deshabilitada+pixeles_mover)
     
     elif movimiento_mesa==False:
-        if mesa_opciones.rect.y//medida_casilla==y_mesa_deshabilitada//medida_casilla:
+        if (mesa_opciones.rect.y+(medida_casilla/2))//medida_casilla==y_mesa_deshabilitada//medida_casilla:
             mesa_colocada=True
 
         if mesa_colocada==True:
@@ -1514,6 +1518,9 @@ while jugando:
             mesa_opciones.actualizar_mesa(medida_casilla,x_mesa,y_mesa_habilitada-pixeles_mover)
 
 
+    print(pixeles_mover)
+    print(movimiento_mesa, " direccion movimiento mesa")
+    print(mesa_colocada, " mesa colocada")
     
 
     if turno%2==0:
@@ -1541,25 +1548,25 @@ while jugando:
                     break
         
         if boton[0]==True and ficha_tocada!=None and clicado==False:
-            print("🟥🟥🟥")
+            #print("🟥🟥🟥")
             mouse_simplificado=int(mouse[0]//medida_casilla),int(mouse[1]//medida_casilla)
-            print(mouse_simplificado)
+            #print(mouse_simplificado)
             
             if mouse_simplificado==(8,3) or mouse_simplificado==(8,2):
                 ficha_escogida_para_cambiar_tipo_color="reina",color_fichas_mesas
-                print(ficha_escogida_para_cambiar_tipo_color)                
+                #print(ficha_escogida_para_cambiar_tipo_color)                
             
             elif mouse_simplificado==(9,3) or mouse_simplificado==(9,2):
                 ficha_escogida_para_cambiar_tipo_color="torre",color_fichas_mesas
-                print(ficha_escogida_para_cambiar_tipo_color)
+                #print(ficha_escogida_para_cambiar_tipo_color)
             
             elif mouse_simplificado==(8,4) or mouse_simplificado==(8,5):
                 ficha_escogida_para_cambiar_tipo_color="alfil",color_fichas_mesas
-                print(ficha_escogida_para_cambiar_tipo_color)
+                #print(ficha_escogida_para_cambiar_tipo_color)
 
             elif mouse_simplificado==(9,4) or mouse_simplificado==(9,5):
                 ficha_escogida_para_cambiar_tipo_color="caballo",color_fichas_mesas
-                print(ficha_escogida_para_cambiar_tipo_color)
+                #print(ficha_escogida_para_cambiar_tipo_color)
             
             
             clicado=True
@@ -1599,6 +1606,7 @@ while jugando:
         
         c+=1
 
+    pygame.draw.circle(pantalla,(13,13,13),(mesa_opciones.rect.x,mesa_opciones.rect.y),5)
 
     lista_fichas_mesa_actual.draw(pantalla)
 
