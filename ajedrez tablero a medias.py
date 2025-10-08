@@ -995,7 +995,7 @@ diccionario_peones={}
 diccionario_posiciones_muertas=[{"peon":"8:7","caballo":"9:7","alfil":"8:6","torre":"9:6","reina":"8:5","rey":"9:5"},{"peon":"8:0","caballo":"9:0","alfil":"8:1","torre":"9:1","reina":"8:2","rey":"9:2"}]#blanco,negro
 
 
-mesa_opciones=mesa(medida_casilla*8,2*medida_casilla,"blanca")
+mesa_opciones=mesa(medida_casilla*8,-3*medida_casilla-(medida_casilla/3)*2,"blanca")
 
 
 
@@ -1081,6 +1081,7 @@ clicado=False
 color_fichas_mesas=""
 pixeles_mover=2
 comprobado=False
+ficha_de_intercambio=None
 
 #::::::::::::::::::::::↓INICIO WHILE↓::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 jugando=True
@@ -1482,6 +1483,7 @@ while jugando:
     for posible_peon in lista_fichas :
         if (posible_peon.tipo == "peon" and posible_peon.columna not in [8,9] and ((posible_peon.color == "blanco" and posible_peon.fila == 0) or (posible_peon.color == "negro" and posible_peon.fila == 7))):
             print("🟨")
+            peon_cambiar=posible_peon
             movimiento_mesa=True
             mesa_colocada=False
 
@@ -1593,6 +1595,22 @@ while jugando:
                     ficha_tocada=None
                     break
     
+
+#reina_negra=ficha("negro",medida_casilla,"reina",x+3,y,False)
+    if peon_cambiar!=None and ficha_escogida_para_cambiar_tipo_color!=None:
+        if ficha_escogida_para_cambiar_tipo_color[0]=="reina":
+            lista_fichas.add(ficha(ficha_escogida_para_cambiar_tipo_color[1],medida_casilla,ficha_escogida_para_cambiar_tipo_color[0],medida_casilla,cord_x+(medida_casilla/10)*9,cord_y+(medida_casilla/4)*3))
+
+        elif ficha_escogida_para_cambiar_tipo_color[0]=="torre":
+            lista_fichas.add(ficha(ficha_escogida_para_cambiar_tipo_color[1],medida_casilla,ficha_escogida_para_cambiar_tipo_color[0],medida_casilla,cord_x+medida_casilla+(medida_casilla/10)*6,cord_y+(medida_casilla/4)*3))
+
+        elif ficha_escogida_para_cambiar_tipo_color[0]=="alfil":
+            lista_fichas.add(ficha(ficha_escogida_para_cambiar_tipo_color[1],medida_casilla,ficha_escogida_para_cambiar_tipo_color[0],medida_casilla,cord_x+(medida_casilla/10)*9,cord_y+((medida_casilla/4)*3)*3))
+
+        elif ficha_escogida_para_cambiar_tipo_color[0]=="caballo":
+            lista_fichas.add(ficha(ficha_escogida_para_cambiar_tipo_color[1],medida_casilla,ficha_escogida_para_cambiar_tipo_color[0],medida_casilla,cord_x+medida_casilla+(medida_casilla/10)*6,cord_y+((medida_casilla/4)*3)*3))
+
+        #ficha animacion activa=ficha añadida
 
     
     cord_y=mesa_opciones.rect.y
