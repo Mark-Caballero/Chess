@@ -1079,7 +1079,7 @@ ficha_escogida_para_cambiar_tipo_color=None
 peon_cambiar=None
 clicado=False
 color_fichas_mesas=""
-pixeles_mover=0
+pixeles_mover=2
 comprobado=False
 
 #::::::::::::::::::::::↓INICIO WHILE↓::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -1495,7 +1495,7 @@ while jugando:
             
     x_mesa=medida_casilla*7+medida_casilla/2
     y_mesa_habilitada=2*medida_casilla
-    pixeles_mover=medida_casilla/medida_casilla
+
 
     print((mesa_opciones.rect.y+(medida_casilla/2))//medida_casilla,"   fila")
     if movimiento_mesa==True:
@@ -1505,17 +1505,25 @@ while jugando:
 
         if mesa_colocada==True:
             mesa_opciones.actualizar_mesa(medida_casilla,x_mesa,y_mesa_habilitada)
+            pixeles_mover=0
         elif mesa_colocada==False:
             mesa_opciones.actualizar_mesa(medida_casilla,x_mesa,y_mesa_deshabilitada+pixeles_mover)
+            pixeles_mover+=2
     
     elif movimiento_mesa==False:
+        print("🟥")
         if (mesa_opciones.rect.y+(medida_casilla/2))//medida_casilla==y_mesa_deshabilitada//medida_casilla:
             mesa_colocada=True
 
         if mesa_colocada==True:
             mesa_opciones.actualizar_mesa(medida_casilla,x_mesa,y_mesa_deshabilitada)
+            pixeles_mover=0
+            print("🟧")
         elif mesa_colocada==False:
             mesa_opciones.actualizar_mesa(medida_casilla,x_mesa,y_mesa_habilitada-pixeles_mover)
+            pixeles_mover+=2
+            
+            print("🟨")
 
 
     print(pixeles_mover)
@@ -1646,3 +1654,4 @@ def menu():
 
 #el bot usa fichas muertas para matar
 #en caso de problemas con las cordenadas, el problema no estaria en la funcion restricciones
+#error: no se muere el peon, se queda donde antes
