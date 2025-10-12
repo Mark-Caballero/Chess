@@ -925,13 +925,20 @@ def simplificar_cord(cord_objetivo, medida_casilla):
 
 lista_fichas=pygame.sprite.Group()#lista sprites
 for i in range(1):
-    for c in range(8):
+    for c in range(7):
             peon_negro=ficha("negro",medida_casilla,"peon",x+c,y+1,False)#peon negro 
             lista_fichas.add(peon_negro)
         
-    for c in range(8):
+    for c in range(7):
             peon_blanco=ficha("blanco",medida_casilla,"peon",x+c,y+6,False)#peon blanco 
             lista_fichas.add(peon_blanco)
+
+    lista_fichas.add(ficha("blanco",medida_casilla,"peon",7,1,False))
+
+    #lista_fichas.add(ficha("blanco", medida_casilla, "peon", lista_fichas.sprites()[0].columna, lista_fichas.sprites()[0].fila, False))
+    #lista_fichas.remove(lista_fichas.sprites()[0])
+
+
 
     #torres negras
     torre_negra=ficha("negro",medida_casilla,"torre",x,y,False)
@@ -1057,6 +1064,7 @@ cordenada_actual_ficha_asesinada=None
 revisado=False
 num_turnos_bot=0
 
+
 variable_borrar=None
 
 
@@ -1082,7 +1090,16 @@ color_fichas_mesas=""
 pixeles_mover=2
 comprobado=False
 ficha_de_intercambio=None
+ficha_nueva=None
+informacion_obtenida=False
 
+
+peon_en_posiciones_especiales=0
+
+ficha_en_movimiento=False
+
+
+borra_esto="BLANCO"
 #::::::::::::::::::::::↓INICIO WHILE↓::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 jugando=True
 while jugando:
@@ -1195,7 +1212,8 @@ while jugando:
 
                         break#salimos del for
             if boton[0]==True and ficha_seleccionada!=None:
-                
+                ficha_en_movimiento=True
+
                 base=mouse[0]-pos_ox
                 medida_linea=int(math.sqrt((mouse[0]-pos_ox)**2+(mouse[1]-pos_oy)**2))
                 #print(f"medida linea={medida_linea}")
@@ -1209,6 +1227,8 @@ while jugando:
                 #si es peon creamos la lista nueva
                 
             if boton[0]==False and ficha_seleccionada!=None:#soltamos el boton
+                ficha_en_movimiento=False
+
                 colocado=False
                 cords_atravesadas=[]
                 x_recorridas=[]
@@ -1326,68 +1346,72 @@ while jugando:
         elif bot_==True and (turno%2==1 and color_bot=="negro" or turno%2==0 and color_bot=="blanco") and animacion==False and ficha_animacion_activa==None:
 
     #lista_opciones_finales.append({"atacante":ficha_bot_actual,"victima":victima_cord,"valor jugada":valor_jugada,"lista rival":lista_rival})
+            if peon_en_posiciones_especiales==1:
+                pass
 
-            
-            for ficha_bot_cord in lista_fichas:
-                if ficha_bot_cord.columna>7:
-                    lista_fichas_muertas.add(ficha_bot_cord)
-                    lista_fichas.remove(ficha_bot_cord)
-
-            objetivo=bot(lista_fichas,lista_casillas_ocupadas,color_bot,medida_casilla)
-            cordenada_objetivo=objetivo["victima"]
-            #print(cordenada_objetivo,"  cordenada mandada por la funcion bot para colocar la ficha")
-            eliminar_ficha_rival=False
-            ficha_bot=objetivo["atacante"]
-            #print(ficha_bot.tipo," tipo ficha bot")
-            ficha_objetivo=None
-
-
-
-
-            #print(ficha_objetivo, "    despues del None")
-            for ficha_rival in objetivo["lista rival"]:
-                if f"{ficha_rival.columna}:{ficha_rival.fila}"==cordenada_objetivo:
-                    eliminar_ficha_rival=True
-                    ficha_objetivo=ficha_rival
-            
-            if eliminar_ficha_rival==True:#matar
-                ficha_animacion_activa=ficha_bot
-                cordenada_objetivo=f"{((int(objetivo['victima'][0]))*medida_casilla)+(medida_casilla/4)}:{int(objetivo['victima'][2])*medida_casilla}"
-                cordenada_objetivo_reducida=f"{int(objetivo['victima'][0])}:{int(objetivo['victima'][2])}"
-                animacion=True
-                
-                cordenada_actual=f"{ficha_animacion_activa.rect.x}:{ficha_animacion_activa.rect.y}"
-                num_x,num_y=movimiento_realista(cordenada_actual,cordenada_objetivo,medida_casilla)
+            elif peon_en_posiciones_especiales==2:
+                pass
+                #escoger reina o caballo dependido de lo que sea mejor
                 
 
-                
-                #___________________________________
-                
-                ficha_asesinada=ficha_objetivo
-            
-                #lista_fichas_muertas.add(ficha_objetivo)
-                #lista_fichas.remove(ficha_objetivo)
 
-                #___________________________________
-                
-                ficha_animacion_activa=ficha_bot
-                turno+=1
-                
+            elif peon_en_posiciones_especiales==0:
+                for ficha_bot_cord in lista_fichas:
+                    if ficha_bot_cord.columna>7:
+                        lista_fichas_muertas.add(ficha_bot_cord)
+                        lista_fichas.remove(ficha_bot_cord)
 
-                num_turnos_bot+=1
+                objetivo=bot(lista_fichas,lista_casillas_ocupadas,color_bot,medida_casilla)
+                cordenada_objetivo=objetivo["victima"]
+                #print(cordenada_objetivo,"  cordenada mandada por la funcion bot para colocar la ficha")
+                eliminar_ficha_rival=False
+                ficha_bot=objetivo["atacante"]
+                #print(ficha_bot.tipo," tipo ficha bot")
+                ficha_objetivo=None
 
-            else:#no matar
-                ficha_animacion_activa=ficha_bot
-                cordenada_objetivo=f"{((int(objetivo['victima'][0]))*medida_casilla)+(medida_casilla/4)}:{int(objetivo['victima'][2])*medida_casilla}"
-                cordenada_objetivo_reducida=f"{int(objetivo['victima'][0])}:{int(objetivo['victima'][2])}"
-                animacion=True
-                
-                cordenada_actual=f"{int(ficha_animacion_activa.rect.x)}:{int(ficha_animacion_activa.rect.y)}"
-                num_x,num_y=movimiento_realista(cordenada_actual,cordenada_objetivo,medida_casilla)
-                
-                turno+=1
 
-                num_turnos_bot+=1
+
+
+                #print(ficha_objetivo, "    despues del None")
+                for ficha_rival in objetivo["lista rival"]:
+                    if f"{ficha_rival.columna}:{ficha_rival.fila}"==cordenada_objetivo:
+                        eliminar_ficha_rival=True
+                        ficha_objetivo=ficha_rival
+                
+                if eliminar_ficha_rival==True:#matar
+                    ficha_animacion_activa=ficha_bot
+                    cordenada_objetivo=f"{((int(objetivo['victima'][0]))*medida_casilla)+(medida_casilla/4)}:{int(objetivo['victima'][2])*medida_casilla}"
+                    cordenada_objetivo_reducida=f"{int(objetivo['victima'][0])}:{int(objetivo['victima'][2])}"
+                    animacion=True
+                    
+                    cordenada_actual=f"{ficha_animacion_activa.rect.x}:{ficha_animacion_activa.rect.y}"
+                    num_x,num_y=movimiento_realista(cordenada_actual,cordenada_objetivo,medida_casilla)
+        
+
+                    ficha_asesinada=ficha_objetivo
+                
+                    #lista_fichas_muertas.add(ficha_objetivo)
+                    #lista_fichas.remove(ficha_objetivo)
+
+                    #___________________________________
+                    
+                    turno+=1
+                    
+
+                    num_turnos_bot+=1
+
+                else:#no matar
+                    ficha_animacion_activa=ficha_bot
+                    cordenada_objetivo=f"{((int(objetivo['victima'][0]))*medida_casilla)+(medida_casilla/4)}:{int(objetivo['victima'][2])*medida_casilla}"
+                    cordenada_objetivo_reducida=f"{int(objetivo['victima'][0])}:{int(objetivo['victima'][2])}"
+                    animacion=True
+                    
+                    cordenada_actual=f"{int(ficha_animacion_activa.rect.x)}:{int(ficha_animacion_activa.rect.y)}"
+                    num_x,num_y=movimiento_realista(cordenada_actual,cordenada_objetivo,medida_casilla)
+                    
+                    turno+=1
+
+                    num_turnos_bot+=1
 
 
 
@@ -1480,14 +1504,41 @@ while jugando:
 
 
     #------MESA---------
-    for posible_peon in lista_fichas :
-        if (posible_peon.tipo == "peon" and posible_peon.columna not in [8,9] and ((posible_peon.color == "blanco" and posible_peon.fila == 0) or (posible_peon.color == "negro" and posible_peon.fila == 7))):
-            print("🟨")
-            peon_cambiar=posible_peon
-            movimiento_mesa=True
-            mesa_colocada=False
+    #print(ficha_en_movimiento)
+    if ficha_en_movimiento==False:
+        for posible_peon in lista_fichas :
+            if (posible_peon.tipo == "peon" and posible_peon.columna not in [8,9]):
+                if(posible_peon.color == "blanco" and posible_peon.fila == 0): 
+                #print("🟨")
+                    peon_cambiar=posible_peon
+                    movimiento_mesa=True
+                    mesa_colocada=False
+                    peon_en_posiciones_especiales=1
+                    
 
-    
+                    if (peon_cambiar.color=="blanco" and turno%2==1) or (peon_cambiar.color=="negro" and turno%2==0):
+                        turno+=1
+                    
+                    
+                    #print("🟩🟩")
+                    break
+                elif (posible_peon.color == "negro" and posible_peon.fila == 7):
+                    peon_cambiar=posible_peon
+                    movimiento_mesa=True
+                    mesa_colocada=False
+                    peon_en_posiciones_especiales=2
+                    if (peon_cambiar.color=="blanco" and turno%2==1) or (peon_cambiar.color=="negro" and turno%2==0):
+                        turno+=1
+                    
+                    
+                    break
+                else:
+                    peon_en_posiciones_especiales=0
+                
+        #else:
+            #movimiento_mesa=True
+            #mesa_colocada=False
+
 
 
 
@@ -1499,7 +1550,7 @@ while jugando:
     y_mesa_habilitada=2*medida_casilla
 
 
-    print((mesa_opciones.rect.y+(medida_casilla/2))//medida_casilla,"   fila")
+    #print((mesa_opciones.rect.y+(medida_casilla/2))//medida_casilla,"   fila")
     if movimiento_mesa==True:
         
         if (mesa_opciones.rect.y+(medida_casilla/2))//medida_casilla==2:
@@ -1513,24 +1564,24 @@ while jugando:
             pixeles_mover+=2
     
     elif movimiento_mesa==False:
-        print("🟥")
+        #print("🟥")
         if (mesa_opciones.rect.y+(medida_casilla/2))//medida_casilla==y_mesa_deshabilitada//medida_casilla:
             mesa_colocada=True
 
         if mesa_colocada==True:
             mesa_opciones.actualizar_mesa(medida_casilla,x_mesa,y_mesa_deshabilitada)
             pixeles_mover=0
-            print("🟧")
+            #print("🟧")
         elif mesa_colocada==False:
             mesa_opciones.actualizar_mesa(medida_casilla,x_mesa,y_mesa_habilitada-pixeles_mover)
             pixeles_mover+=2
             
-            print("🟨")
+            #print("🟨")
 
 
-    print(pixeles_mover)
-    print(movimiento_mesa, " direccion movimiento mesa")
-    print(mesa_colocada, " mesa colocada")
+    #print(pixeles_mover)
+    #print(movimiento_mesa, " direccion movimiento mesa")
+    #print(mesa_colocada, " mesa colocada")
     
 
     if turno%2==0:
@@ -1558,7 +1609,7 @@ while jugando:
                     break
         
         if boton[0]==True and ficha_tocada!=None and clicado==False:
-            #print("🟥🟥🟥")
+            print("🟥🟥🟥")
             mouse_simplificado=int(mouse[0]//medida_casilla),int(mouse[1]//medida_casilla)
             #print(mouse_simplificado)
             
@@ -1584,8 +1635,6 @@ while jugando:
             #ficha_escogida_para_cambiar_tipo_color=ficha_tocada.tipo,ficha_tocada.color
             #print(ficha_escogida_para_cambiar_tipo_color)
 
-
-            
         
         if tocando==True:
             for ficha_ in lista_fichas_mesa_actual:
@@ -1597,20 +1646,61 @@ while jugando:
     
 
 #reina_negra=ficha("negro",medida_casilla,"reina",x+3,y,False)
-    if peon_cambiar!=None and ficha_escogida_para_cambiar_tipo_color!=None:
+    if peon_cambiar!=None and ficha_escogida_para_cambiar_tipo_color!=None and informacion_obtenida==False:
+        print(peon_cambiar)
         if ficha_escogida_para_cambiar_tipo_color[0]=="reina":
-            lista_fichas.add(ficha(ficha_escogida_para_cambiar_tipo_color[1],medida_casilla,ficha_escogida_para_cambiar_tipo_color[0],medida_casilla,cord_x+(medida_casilla/10)*9,cord_y+(medida_casilla/4)*3))
+            ficha_nueva=ficha(ficha_escogida_para_cambiar_tipo_color[1],medida_casilla,ficha_escogida_para_cambiar_tipo_color[0],8,2,False)
+            lista_fichas.add(ficha_nueva)
 
         elif ficha_escogida_para_cambiar_tipo_color[0]=="torre":
-            lista_fichas.add(ficha(ficha_escogida_para_cambiar_tipo_color[1],medida_casilla,ficha_escogida_para_cambiar_tipo_color[0],medida_casilla,cord_x+medida_casilla+(medida_casilla/10)*6,cord_y+(medida_casilla/4)*3))
+            ficha_nueva=ficha(ficha_escogida_para_cambiar_tipo_color[1],medida_casilla,ficha_escogida_para_cambiar_tipo_color[0],9,2,False)
+            lista_fichas.add(ficha_nueva)
 
         elif ficha_escogida_para_cambiar_tipo_color[0]=="alfil":
-            lista_fichas.add(ficha(ficha_escogida_para_cambiar_tipo_color[1],medida_casilla,ficha_escogida_para_cambiar_tipo_color[0],medida_casilla,cord_x+(medida_casilla/10)*9,cord_y+((medida_casilla/4)*3)*3))
+            ficha_nueva=ficha(ficha_escogida_para_cambiar_tipo_color[1],medida_casilla,ficha_escogida_para_cambiar_tipo_color[0],8,4,False)
+            lista_fichas.add(ficha_nueva)
 
         elif ficha_escogida_para_cambiar_tipo_color[0]=="caballo":
-            lista_fichas.add(ficha(ficha_escogida_para_cambiar_tipo_color[1],medida_casilla,ficha_escogida_para_cambiar_tipo_color[0],medida_casilla,cord_x+medida_casilla+(medida_casilla/10)*6,cord_y+((medida_casilla/4)*3)*3))
+            ficha_nueva=ficha(ficha_escogida_para_cambiar_tipo_color[1],medida_casilla,ficha_escogida_para_cambiar_tipo_color[0],9,4,False)
+            
+            lista_fichas.add(ficha_nueva)
+        
 
+        #print(ficha_escogida_para_cambiar_tipo_color[0],ficha_escogida_para_cambiar_tipo_color[1])
+        #print(ficha_nueva.color,ficha_nueva.tipo,ficha_nueva.columna,ficha_nueva.fila,"    🟧🟧🟧🟧🟧🟧🟧🟧")
+        #ficha_nueva.actualizar(medida_casilla)  
+        #print(ficha_nueva.columna,ficha_nueva.fila)
         #ficha animacion activa=ficha añadida
+        
+        if ficha_nueva.tipo=="reina":
+            x_ficha_nueva=mesa_opciones.rect.x+(medida_casilla/10)*9
+            y_ficha_nueva=mesa_opciones.rect.y+(medida_casilla/4)*3
+
+        elif ficha_nueva.tipo=="torre":
+            x_ficha_nueva=mesa_opciones.rect.x+medida_casilla+(medida_casilla/10)*6
+            y_ficha_nueva=mesa_opciones.rect.y+(medida_casilla/4)*3
+        
+        elif ficha_nueva.tipo=="alfil":
+            x_ficha_nueva=mesa_opciones.rect.x+(medida_casilla/10)*9
+            y_ficha_nueva=mesa_opciones.rect.y+((medida_casilla/4)*3)*3
+        
+        elif ficha_nueva.tipo=="caballo":
+            x_ficha_nueva=mesa_opciones.rect.x+medida_casilla+(medida_casilla/10)*6
+            y_ficha_nueva=mesa_opciones.rect.y+((medida_casilla/4)*3)*3
+        
+        
+        
+        ficha_nueva.actualizar_posicion_especifica(medida_casilla,x_ficha_nueva,y_ficha_nueva)
+
+
+        ficha_animacion_activa=ficha_nueva
+        cordenada_objetivo=f"{int(peon_cambiar.rect.x)}:{int(peon_cambiar.rect.y)}"
+        cordenada_objetivo_reducida=f"{int(peon_cambiar.rect.x)//medida_casilla}:{int(peon_cambiar.rect.y)//medida_casilla}"
+        animacio=True
+        cordenada_actual=f"{ficha_animacion_activa.rect.x}:{ficha_animacion_activa.rect.y}"
+        num_x,num_y=movimiento_realista(cordenada_actual,cordenada_objetivo,medida_casilla)
+        ficha_asesinada=peon_cambiar
+        informacion_obtenida=True
 
     
     cord_y=mesa_opciones.rect.y
@@ -1638,6 +1728,9 @@ while jugando:
 
     clock.tick(120)
 
+    if ficha_animacion_activa!=None:
+        print(ficha_animacion_activa.tipo,ficha_animacion_activa.color)
+    
     #actualizar_mesa(self,mediada_casilla,x,y):
     gg=False
     if animacion==True and ficha_animacion_activa!=variable_borrar and gg==True:
@@ -1666,8 +1759,7 @@ while jugando:
     pygame.display.flip()
 
 
-def menu():
-    fondo=pygame.image.load("fondo.png")
+
 
 
 #el bot usa fichas muertas para matar
