@@ -1098,7 +1098,7 @@ peon_en_posiciones_especiales=0
 
 ficha_en_movimiento=False
 
-
+valores_fichas={"rey":9999,"reina":9,"torre":5,"alfil":3,"caballo":3,"peon":1}
 borra_esto="BLANCO"
 #::::::::::::::::::::::↓INICIO WHILE↓::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 jugando=True
@@ -1167,22 +1167,12 @@ while jugando:
                                 lista_posiciones_fichas_rivales.append(f"{_ficha_.columna}:{_ficha_.fila}")
 
                         lista_opciones=ficha_seleccionada.restricciones(False)
-                        ####
-                        #borrar=True
-                        #if ficha_seleccionada.tipo=="torre" or borrar==True:
-                            #print(lista_opciones)
-                            #print("------")
-                        
-                        ####
+                    
 
                         if ficha_seleccionada.tipo!="caballo" and ficha_seleccionada.tipo!="peon" and ficha_seleccionada.tipo!="rey":
                             lista_opciones=cords_atravesadas_bot(lista_opciones,lista_posiciones_fichas_rivales,lista_posiciones_fichas_actuales,ficha_seleccionada)
                             print(lista_opciones,"----------------")
-                        #######
-                        #if ficha_seleccionada.tipo=="torre":
-                        #    print(lista_opciones)
-                        #######
-
+                        
 
                         elif ficha_seleccionada.tipo=="rey":
                             lista_opciones=movimiento_rey(lista_posiciones_fichas_actuales,lista_opciones)
@@ -1349,6 +1339,9 @@ while jugando:
             if peon_en_posiciones_especiales==1:
                 pass
 
+
+
+#🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛
             elif peon_en_posiciones_especiales==2:
                 posicion_peon_cambiar=peon_cambiar.columna,peon_cambiar.fila
                 reina_temporal=ficha(color_bot,medida_casilla,"reina",posicion_peon_cambiar[0],posicion_peon_cambiar[1],False)
@@ -1356,20 +1349,42 @@ while jugando:
                 
                 lista_opciones_reina=reina_temporal.restricciones(False)
                 lista_opciones_caballo=caballo_temporal.restricciones(False)
+                
+                lista_posiciones_rivales_peon=[]
+                lista_posiciones_equipo_peon=[]
 
+                for ficha_lista in lista_fichas:
+                    if ficha_lista.color!=peon_cambiar.color:
+                        lista_posiciones_rivales_peon.append(f"{ficha_lista.columna}:{ficha_lista.fila}")
+                    else:
+                        lista_posiciones_equipo_peon.append(f"{ficha_lista.columna}:{ficha_lista.fila}")
+
+                lista_opciones_reina=cords_atravesadas_bot(lista_opciones_reina,lista_posiciones_rivales_peon,lista_posiciones_equipo_peon,reina_temporal)
+                
+                
+                
+                #valores_fichas={"rey":9999,"reina":9,"torre":5,"alfil":3,"caballo":3,"peon":1}
+                dic_puntuaciones_reina={}
+                dic_puntuaciones_caballo={}
 
                 for ficha_lista in lista_fichas:
                     if ficha_lista.color!=color_bot:
+
+
                         if f"{ficha_lista.columna}:{ficha_lista.fila}" in lista_opciones_reina:
-                            pass
+                            dic_puntuaciones_reina.update({valores_fichas[ficha_lista.tipo]: f"{ficha_lista.columna}:{ficha_lista.fila}"})
 
                         if f"{ficha_lista.columna}:{ficha_lista.fila}" in lista_opciones_caballo:
-                            pass
+                            dic_puntuaciones_caballo.update({valores_fichas[ficha_lista.tipo]: f"{ficha_lista.columna}:{ficha_lista.fila}"})
                 
                 
                 pass
                 #escoger reina o caballo dependido de lo que sea mejor
                 
+#🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛
+
+
+
 
 
             elif peon_en_posiciones_especiales==0:
