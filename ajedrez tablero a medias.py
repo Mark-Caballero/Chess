@@ -1350,6 +1350,23 @@ while jugando:
                 pass
 
             elif peon_en_posiciones_especiales==2:
+                posicion_peon_cambiar=peon_cambiar.columna,peon_cambiar.fila
+                reina_temporal=ficha(color_bot,medida_casilla,"reina",posicion_peon_cambiar[0],posicion_peon_cambiar[1],False)
+                caballo_temporal=ficha(color_bot,medida_casilla,"caballo",posicion_peon_cambiar[0],posicion_peon_cambiar[1],False)
+                
+                lista_opciones_reina=reina_temporal.restricciones(False)
+                lista_opciones_caballo=caballo_temporal.restricciones(False)
+
+
+                for ficha_lista in lista_fichas:
+                    if ficha_lista.color!=color_bot:
+                        if f"{ficha_lista.columna}:{ficha_lista.fila}" in lista_opciones_reina:
+                            pass
+
+                        if f"{ficha_lista.columna}:{ficha_lista.fila}" in lista_opciones_caballo:
+                            pass
+                
+                
                 pass
                 #escoger reina o caballo dependido de lo que sea mejor
                 
@@ -1430,6 +1447,10 @@ while jugando:
         
     if ficha_animacion_activa!=None:
         if simplificar_cord(f"{ficha_animacion_activa.rect.x}:{ficha_animacion_activa.rect.y}",medida_casilla)!=cordenada_objetivo_reducida:
+
+            
+            print("cordenada actual:",simplificar_cord(f"{ficha_animacion_activa.rect.x}:{ficha_animacion_activa.rect.y}",medida_casilla),"  cordenada objetivo:",cordenada_objetivo_reducida)
+            
             ficha_animacion_activa.rect.x+=num_x
             ficha_animacion_activa.rect.y+=num_y
             ficha_animacion_activa.actualizar_medida(medida_casilla)
@@ -1695,7 +1716,8 @@ while jugando:
 
         ficha_animacion_activa=ficha_nueva
         cordenada_objetivo=f"{int(peon_cambiar.rect.x)}:{int(peon_cambiar.rect.y)}"
-        cordenada_objetivo_reducida=f"{int(peon_cambiar.rect.x)//medida_casilla}:{int(peon_cambiar.rect.y)//medida_casilla}"
+
+        cordenada_objetivo_reducida=f"{int(peon_cambiar.rect.x//medida_casilla)}:{int(peon_cambiar.rect.y//medida_casilla)}"
         animacio=True
         cordenada_actual=f"{ficha_animacion_activa.rect.x}:{ficha_animacion_activa.rect.y}"
         num_x,num_y=movimiento_realista(cordenada_actual,cordenada_objetivo,medida_casilla)
@@ -1722,7 +1744,7 @@ while jugando:
         
         c+=1
 
-    pygame.draw.circle(pantalla,(13,13,13),(mesa_opciones.rect.x,mesa_opciones.rect.y),5)
+    pygame.draw.circle(pantalla,(13,13,13),(mesa_opciones.rect.x+(medida_casilla/10)*9,mesa_opciones.rect.y+(medida_casilla/4)*3),5)
 
     lista_fichas_mesa_actual.draw(pantalla)
 
