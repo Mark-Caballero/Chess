@@ -1385,9 +1385,35 @@ while jugando:
                 num_caballo=0
                 for puntuacion_caballo in dic_puntuaciones_caballo:
                     num_caballo+=puntuacion_caballo
-                media_caballo=num_caballo/len(dic)
+                media_caballo=num_caballo/len(dic_puntuaciones_caballo)
+                
+                lista_opciones_final=[]
+                if num_reina>num_caballo:
+                    tipo_ficha_final="reina"
+                    color_ficha_final=color_bot
+                    dic_final=dic_puntuaciones_reina
+                else:
+                    tipo_ficha_final="caballo"
+                    color_ficha_final=color_bot
+                    dic_final=dic_puntuaciones_caballo
+                
+                num_maximo=0
+                cord_num_maximo=None
+                for opcion in dic_final:
+                    if opcion>num_maximo:
+                        num_maximo=opcion
+                        cord_num_maximo=dic_final[opcion]
 
-                pass
+
+
+                ficha_escogida_para_cambiar_tipo_color
+                final=tipo_ficha_final,color_ficha_final,cord_num_maximo
+                
+                
+                
+
+
+                
                 #escoger reina o caballo dependido de lo que sea mejor
                 
 #🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛
@@ -1558,7 +1584,12 @@ while jugando:
                     peon_cambiar=posible_peon
                     movimiento_mesa=True
                     mesa_colocada=False
-                    peon_en_posiciones_especiales=1
+
+                    if bot_==True and color_bot=="blanco":
+                        peon_en_posiciones_especiales=2
+
+                    else:
+                        peon_en_posiciones_especiales=1
                     
 
                     if (peon_cambiar.color=="blanco" and turno%2==1) or (peon_cambiar.color=="negro" and turno%2==0):
@@ -1571,7 +1602,13 @@ while jugando:
                     peon_cambiar=posible_peon
                     movimiento_mesa=True
                     mesa_colocada=False
-                    peon_en_posiciones_especiales=2
+                    
+                    if bot_==True and color_bot=="negro":
+                        peon_en_posiciones_especiales=2
+
+                    else:
+                        peon_en_posiciones_especiales=1                    
+                    
                     if (peon_cambiar.color=="blanco" and turno%2==1) or (peon_cambiar.color=="negro" and turno%2==0):
                         turno+=1
                     
