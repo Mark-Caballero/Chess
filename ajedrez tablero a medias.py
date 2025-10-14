@@ -1377,7 +1377,16 @@ while jugando:
                         if f"{ficha_lista.columna}:{ficha_lista.fila}" in lista_opciones_caballo:
                             dic_puntuaciones_caballo.update({valores_fichas[ficha_lista.tipo]: f"{ficha_lista.columna}:{ficha_lista.fila}"})
                 
-                
+                num_reina=0
+                for puntuacion_reina in dic_puntuaciones_reina:
+                    num_reina+=puntuacion_reina
+                media_reina=num_reina/len(dic_puntuaciones_reina)
+
+                num_caballo=0
+                for puntuacion_caballo in dic_puntuaciones_caballo:
+                    num_caballo+=puntuacion_caballo
+                media_caballo=num_caballo/len(dic)
+
                 pass
                 #escoger reina o caballo dependido de lo que sea mejor
                 
