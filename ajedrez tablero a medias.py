@@ -1095,7 +1095,7 @@ ficha_nueva=None
 informacion_obtenida=False
 entrado_bot_opcion_2=False
 
-
+opcion_final_bot=None
 peon_en_posiciones_especiales=0
 
 ficha_en_movimiento=False
@@ -1380,16 +1380,32 @@ while jugando:
                         if f"{ficha_lista.columna}:{ficha_lista.fila}" in lista_opciones_caballo:
                             dic_puntuaciones_caballo.update({valores_fichas[ficha_lista.tipo]: f"{ficha_lista.columna}:{ficha_lista.fila}"})
                 
+                #-------------------------------------------------
                 num_reina=0
                 for puntuacion_reina in dic_puntuaciones_reina:
                     num_reina+=puntuacion_reina
-                media_reina=num_reina/len(dic_puntuaciones_reina)
+                    print(puntuacion_reina,"reina")
+                
+                print(num_reina,len(dic_puntuaciones_reina),"num_reina y numero de elementos en diccionario de reina")
+                
+                if len(dic_puntuaciones_reina)>1:
+                    media_reina=num_reina/len(dic_puntuaciones_reina)
+                else:
+                    media_reina=0
 
+                #--------------------------------------------------
                 num_caballo=0
                 for puntuacion_caballo in dic_puntuaciones_caballo:
                     num_caballo+=puntuacion_caballo
-                media_caballo=num_caballo/len(dic_puntuaciones_caballo)
-                
+                    print(puntuacion_caballo,"caballo")
+
+                print(num_caballo,len(dic_puntuaciones_caballo),"num_caballo y numero de elementos en diccionario de reina")
+
+                if len(dic_puntuaciones_caballo)>1:
+                    media_caballo=num_caballo/len(dic_puntuaciones_caballo)
+                else:
+                    media_caballo=0
+                #--------------------------------------------------
                 lista_opciones_final=[]
                 if num_reina>num_caballo:
                     tipo_ficha_final="reina"
@@ -1409,11 +1425,10 @@ while jugando:
 
 
 
-                ficha_escogida_para_cambiar_tipo_color
-                cord_peon=f"{posicion_peon_cambiar[0]}:{posicion_peon_cambiar[1]}"
                 
-                final=tipo_ficha_final,color_ficha_final,cord_peon
-                print(final,"  ¡¡¡FINAL!!!")
+                
+                opcion_final_bot=tipo_ficha_final,color_ficha_final
+                print(opcion_final_bot,"  ¡¡¡FINAL!!!")
                 entrado_bot_opcion_2=True                
                 
 
@@ -1501,6 +1516,11 @@ while jugando:
 #_________________________________________________________________________________________________
         #movimiento_realista(cord_a,cord_b,medida_casilla)
         
+    if mesa_colocada==True and movimiento_mesa==True and opcion_final_bot!=None:
+        ficha_escogida_para_cambiar_tipo_color=opcion_final_bot
+        opcion_final_bot=None
+
+    
     if ficha_animacion_activa!=None:
         if simplificar_cord(f"{ficha_animacion_activa.rect.x}:{ficha_animacion_activa.rect.y}",medida_casilla)!=cordenada_objetivo_reducida:
 
@@ -1735,7 +1755,7 @@ while jugando:
     
 
 #reina_negra=ficha("negro",medida_casilla,"reina",x+3,y,False)
-    print("informacion obtenida: ",informacion_obtenida)
+    #print("informacion obtenida: ",informacion_obtenida)
     if peon_cambiar!=None and ficha_escogida_para_cambiar_tipo_color!=None and informacion_obtenida==False:
         print(peon_cambiar)
 
