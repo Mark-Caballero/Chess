@@ -1091,7 +1091,9 @@ pixeles_mover=2
 comprobado=False
 ficha_de_intercambio=None
 ficha_nueva=None
+
 informacion_obtenida=False
+entrado_bot_opcion_2=False
 
 
 peon_en_posiciones_especiales=0
@@ -1171,7 +1173,7 @@ while jugando:
 
                         if ficha_seleccionada.tipo!="caballo" and ficha_seleccionada.tipo!="peon" and ficha_seleccionada.tipo!="rey":
                             lista_opciones=cords_atravesadas_bot(lista_opciones,lista_posiciones_fichas_rivales,lista_posiciones_fichas_actuales,ficha_seleccionada)
-                            print(lista_opciones,"----------------")
+                            #print(lista_opciones,"----------------")
                         
 
                         elif ficha_seleccionada.tipo=="rey":
@@ -1342,7 +1344,8 @@ while jugando:
 
 
 #🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛
-            elif peon_en_posiciones_especiales==2:
+            elif peon_en_posiciones_especiales==2 and entrado_bot_opcion_2==False:
+                print("peon_posiciones_especiales= 2")
                 posicion_peon_cambiar=peon_cambiar.columna,peon_cambiar.fila
                 reina_temporal=ficha(color_bot,medida_casilla,"reina",posicion_peon_cambiar[0],posicion_peon_cambiar[1],False)
                 caballo_temporal=ficha(color_bot,medida_casilla,"caballo",posicion_peon_cambiar[0],posicion_peon_cambiar[1],False)
@@ -1407,9 +1410,11 @@ while jugando:
 
 
                 ficha_escogida_para_cambiar_tipo_color
-                final=tipo_ficha_final,color_ficha_final,cord_num_maximo
+                cord_peon=f"{posicion_peon_cambiar[0]}:{posicion_peon_cambiar[1]}"
                 
-                
+                final=tipo_ficha_final,color_ficha_final,cord_peon
+                print(final,"  ¡¡¡FINAL!!!")
+                entrado_bot_opcion_2=True                
                 
 
 
@@ -1423,6 +1428,7 @@ while jugando:
 
 
             elif peon_en_posiciones_especiales==0:
+
                 for ficha_bot_cord in lista_fichas:
                     if ficha_bot_cord.columna>7:
                         lista_fichas_muertas.add(ficha_bot_cord)
@@ -1505,6 +1511,7 @@ while jugando:
             ficha_animacion_activa.rect.y+=num_y
             ficha_animacion_activa.actualizar_medida(medida_casilla)
             pantalla.blit(ficha_animacion_activa.image,ficha_animacion_activa.rect)
+            
 
         else:
             if revisado==False:
@@ -1691,7 +1698,7 @@ while jugando:
                     break
         
         if boton[0]==True and ficha_tocada!=None and clicado==False:
-            print("🟥🟥🟥")
+            #print("🟥🟥🟥")
             mouse_simplificado=int(mouse[0]//medida_casilla),int(mouse[1]//medida_casilla)
             #print(mouse_simplificado)
             
@@ -1728,8 +1735,15 @@ while jugando:
     
 
 #reina_negra=ficha("negro",medida_casilla,"reina",x+3,y,False)
+    print("informacion obtenida: ",informacion_obtenida)
     if peon_cambiar!=None and ficha_escogida_para_cambiar_tipo_color!=None and informacion_obtenida==False:
         print(peon_cambiar)
+
+        
+
+
+
+
         if ficha_escogida_para_cambiar_tipo_color[0]=="reina":
             ficha_nueva=ficha(ficha_escogida_para_cambiar_tipo_color[1],medida_casilla,ficha_escogida_para_cambiar_tipo_color[0],8,2,False)
             lista_fichas.add(ficha_nueva)
@@ -1805,14 +1819,15 @@ while jugando:
         
         c+=1
 
-    pygame.draw.circle(pantalla,(13,13,13),(mesa_opciones.rect.x+(medida_casilla/10)*9,mesa_opciones.rect.y+(medida_casilla/4)*3),5)
+    #pygame.draw.circle(pantalla,(13,13,13),(mesa_opciones.rect.x+(medida_casilla/10)*9,mesa_opciones.rect.y+(medida_casilla/4)*3),5)
 
     lista_fichas_mesa_actual.draw(pantalla)
 
     clock.tick(120)
 
     if ficha_animacion_activa!=None:
-        print(ficha_animacion_activa.tipo,ficha_animacion_activa.color)
+        pass
+        #print(ficha_animacion_activa.tipo,ficha_animacion_activa.color)
     
     #actualizar_mesa(self,mediada_casilla,x,y):
     gg=False
