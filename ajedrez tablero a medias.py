@@ -1281,8 +1281,12 @@ while jugando:
                             
 
                             ficha_animacion_activa=pieza
-                            cordenada_objetivo=f"{(int(diccionario_posiciones_muertas[turno%2][pieza.tipo][0])*medida_casilla)+(medida_casilla/4)}:{int(diccionario_posiciones_muertas[turno%2][pieza.tipo][2])*medida_casilla}"
-                            cordenada_objetivo_reducida=f"{int(diccionario_posiciones_muertas[turno%2][pieza.tipo][0])}:{int(diccionario_posiciones_muertas[turno%2][pieza.tipo][2])}"
+                            if ficha_animacion_activa.color=="negro":
+                                lista_dic=0
+                            else:
+                                lista_dic=1
+                            cordenada_objetivo=f"{(int(diccionario_posiciones_muertas[lista_dic][pieza.tipo][0])*medida_casilla)+(medida_casilla/4)}:{int(diccionario_posiciones_muertas[lista_dic][pieza.tipo][2])*medida_casilla}"
+                            cordenada_objetivo_reducida=f"{int(diccionario_posiciones_muertas[lista_dic][pieza.tipo][0])}:{int(diccionario_posiciones_muertas[lista_dic][pieza.tipo][2])}"
                             animacion=True 
                             
                             cordenada_actual=f"{ficha_animacion_activa.rect.x}:{ficha_animacion_activa.rect.y}"
@@ -1522,10 +1526,10 @@ while jugando:
 
     
     if ficha_animacion_activa!=None:
-        if simplificar_cord(f"{ficha_animacion_activa.rect.x}:{ficha_animacion_activa.rect.y}",medida_casilla)!=cordenada_objetivo_reducida:
+        if f"{int(ficha_animacion_activa.rect.x//medida_casilla)}:{int((ficha_animacion_activa.rect.y+(medida_casilla/2))//medida_casilla)}"!=cordenada_objetivo_reducida:
 
             
-            print("cordenada actual:",simplificar_cord(f"{ficha_animacion_activa.rect.x}:{ficha_animacion_activa.rect.y}",medida_casilla),"  cordenada objetivo:",cordenada_objetivo_reducida)
+            print("cordenada actual:",simplificar_cord(f"{(ficha_animacion_activa.rect.x)}:{ficha_animacion_activa.rect.y}",medida_casilla),"cordenada actual 2: ",f"{int(ficha_animacion_activa.rect.x//medida_casilla)}:{int(ficha_animacion_activa.rect.y//medida_casilla)}","  cordenada objetivo:",cordenada_objetivo_reducida)
             
             ficha_animacion_activa.rect.x+=num_x
             ficha_animacion_activa.rect.y+=num_y
@@ -1644,9 +1648,9 @@ while jugando:
                 else:
                     peon_en_posiciones_especiales=0
                 
-        #else:
-            #movimiento_mesa=True
-            #mesa_colocada=False
+        else:
+            movimiento_mesa=False
+            mesa_colocada=False
 
 
 
