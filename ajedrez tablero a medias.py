@@ -1349,7 +1349,7 @@ while jugando:
 
 #🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛
             elif peon_en_posiciones_especiales==2 and entrado_bot_opcion_2==False:
-                print("peon_posiciones_especiales= 2")
+                #print("peon_posiciones_especiales= 2")
                 posicion_peon_cambiar=peon_cambiar.columna,peon_cambiar.fila
                 reina_temporal=ficha(color_bot,medida_casilla,"reina",posicion_peon_cambiar[0],posicion_peon_cambiar[1],False)
                 caballo_temporal=ficha(color_bot,medida_casilla,"caballo",posicion_peon_cambiar[0],posicion_peon_cambiar[1],False)
@@ -1388,9 +1388,9 @@ while jugando:
                 num_reina=0
                 for puntuacion_reina in dic_puntuaciones_reina:
                     num_reina+=puntuacion_reina
-                    print(puntuacion_reina,"reina")
+                    #print(puntuacion_reina,"reina")
                 
-                print(num_reina,len(dic_puntuaciones_reina),"num_reina y numero de elementos en diccionario de reina")
+                #print(num_reina,len(dic_puntuaciones_reina),"num_reina y numero de elementos en diccionario de reina")
                 
                 if len(dic_puntuaciones_reina)>1:
                     media_reina=num_reina/len(dic_puntuaciones_reina)
@@ -1401,9 +1401,9 @@ while jugando:
                 num_caballo=0
                 for puntuacion_caballo in dic_puntuaciones_caballo:
                     num_caballo+=puntuacion_caballo
-                    print(puntuacion_caballo,"caballo")
+                    #print(puntuacion_caballo,"caballo")
 
-                print(num_caballo,len(dic_puntuaciones_caballo),"num_caballo y numero de elementos en diccionario de reina")
+                #print(num_caballo,len(dic_puntuaciones_caballo),"num_caballo y numero de elementos en diccionario de reina")
 
                 if len(dic_puntuaciones_caballo)>1:
                     media_caballo=num_caballo/len(dic_puntuaciones_caballo)
@@ -1529,7 +1529,7 @@ while jugando:
         if f"{int(ficha_animacion_activa.rect.x//medida_casilla)}:{int((ficha_animacion_activa.rect.y+(medida_casilla/2))//medida_casilla)}"!=cordenada_objetivo_reducida:
 
             
-            print("cordenada actual:",simplificar_cord(f"{(ficha_animacion_activa.rect.x)}:{ficha_animacion_activa.rect.y}",medida_casilla),"cordenada actual 2: ",f"{int(ficha_animacion_activa.rect.x//medida_casilla)}:{int(ficha_animacion_activa.rect.y//medida_casilla)}","  cordenada objetivo:",cordenada_objetivo_reducida)
+            #print("cordenada actual:",simplificar_cord(f"{(ficha_animacion_activa.rect.x)}:{ficha_animacion_activa.rect.y}",medida_casilla),"cordenada actual 2: ",f"{int(ficha_animacion_activa.rect.x//medida_casilla)}:{int(ficha_animacion_activa.rect.y//medida_casilla)}","  cordenada objetivo:",cordenada_objetivo_reducida)
             
             ficha_animacion_activa.rect.x+=num_x
             ficha_animacion_activa.rect.y+=num_y
@@ -1715,7 +1715,7 @@ while jugando:
     if mesa_colocada==True:
         if ficha_tocada==None:
             for ficha_mesa in lista_fichas_mesa_actual:
-                if ficha_mesa.rect.collidepoint(pygame.mouse.get_pos()):
+                if ficha_mesa.rect.collidepoint(pygame.mouse.get_pos()) and mesa_colocada==True:
                     ficha_tocada=ficha_mesa
                     ficha_tocada.agrandar()
                     tocando=True
@@ -1749,23 +1749,29 @@ while jugando:
             #print(ficha_escogida_para_cambiar_tipo_color)
 
         
-        if tocando==True:
+        print(mesa_colocada)
+        if tocando==True :
             for ficha_ in lista_fichas_mesa_actual:
                 if ficha_.rect.collidepoint(pygame.mouse.get_pos())==False and ficha_==ficha_tocada:
+                    #print("REDUCIR")
                     ficha_.reducir()
                     tocando=False
                     ficha_tocada=None
                     break
+    elif ficha_tocada!=None:
+        ficha_tocada.reducir()
+        tocando=False
+        ficha_tocada=None
+
+
+        
+
     
 
 #reina_negra=ficha("negro",medida_casilla,"reina",x+3,y,False)
     #print("informacion obtenida: ",informacion_obtenida)
     if peon_cambiar!=None and ficha_escogida_para_cambiar_tipo_color!=None and informacion_obtenida==False:
-        print(peon_cambiar)
-
-        
-
-
+        #print(peon_cambiar)
 
 
         if ficha_escogida_para_cambiar_tipo_color[0]=="reina":
@@ -1854,6 +1860,32 @@ while jugando:
         #print(ficha_animacion_activa.tipo,ficha_animacion_activa.color)
     
     #actualizar_mesa(self,mediada_casilla,x,y):
+
+    if mesa_colocada==True and movimiento_mesa==False:
+        ficha_escogida_para_cambiar_tipo_color=None
+        peon_cambiar=None
+        clicado=False
+        ficha_nueva=None
+        entrado_bot_opcion_2=False
+
+
+    print(
+        "movimiento_mesa: ",movimiento_mesa,"\n",
+        "mesa_colocada: ",mesa_colocada,"\n",
+        "ficha_escogida_para_cambiar_tipo_color:",ficha_escogida_para_cambiar_tipo_color,"\n",
+        "peon_cambiar: ",peon_cambiar,"\n",
+        "clicado:",clicado,"\n",
+        "color_fichas_mesas:", color_fichas_mesas,"\n",
+        "comprobado: ",comprobado,"\n",
+        "ficha_de_intercambio",ficha_de_intercambio,"\n",
+        "ficha_nueva: ",ficha_nueva,"\n",
+        "entrado_bot_opcion2: ",entrado_bot_opcion_2,
+        "--------------------------------------"
+
+    )
+
+
+
     gg=False
     if animacion==True and ficha_animacion_activa!=variable_borrar and gg==True:
         variable_borrar=ficha_animacion_activa
