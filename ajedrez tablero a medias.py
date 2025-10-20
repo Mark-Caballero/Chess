@@ -1712,7 +1712,13 @@ while jugando:
 
 
     
-    if mesa_colocada==True:
+    if mesa_colocada==True and movimiento_mesa==True:
+        
+        if clicado==False:
+            print("entrado en if mesa_colocada==True")
+        
+        
+        
         if ficha_tocada==None:
             for ficha_mesa in lista_fichas_mesa_actual:
                 if ficha_mesa.rect.collidepoint(pygame.mouse.get_pos()) and mesa_colocada==True:
@@ -1722,7 +1728,7 @@ while jugando:
                     break
         
         if boton[0]==True and ficha_tocada!=None and clicado==False:
-            #print("🟥🟥🟥")
+            print("🟥🟥🟥")
             mouse_simplificado=int(mouse[0]//medida_casilla),int(mouse[1]//medida_casilla)
             #print(mouse_simplificado)
             
@@ -1749,7 +1755,7 @@ while jugando:
             #print(ficha_escogida_para_cambiar_tipo_color)
 
         
-        print(mesa_colocada)
+        #print(mesa_colocada)
         if tocando==True :
             for ficha_ in lista_fichas_mesa_actual:
                 if ficha_.rect.collidepoint(pygame.mouse.get_pos())==False and ficha_==ficha_tocada:
@@ -1869,24 +1875,25 @@ while jugando:
         entrado_bot_opcion_2=False
 
 
-    print(
-        "movimiento_mesa: ",movimiento_mesa,"\n",
-        "mesa_colocada: ",mesa_colocada,"\n",
-        "ficha_escogida_para_cambiar_tipo_color:",ficha_escogida_para_cambiar_tipo_color,"\n",
-        "peon_cambiar: ",peon_cambiar,"\n",
-        "clicado:",clicado,"\n",
-        "color_fichas_mesas:", color_fichas_mesas,"\n",
-        "comprobado: ",comprobado,"\n",
-        "ficha_de_intercambio",ficha_de_intercambio,"\n",
-        "ficha_nueva: ",ficha_nueva,"\n",
-        "entrado_bot_opcion2: ",entrado_bot_opcion_2,
-        "--------------------------------------"
-
-    )
-
-
-
     gg=False
+    if gg=="1":
+        print(
+            "movimiento_mesa: ",movimiento_mesa,"\n",
+            "mesa_colocada: ",mesa_colocada,"\n",
+            "ficha_escogida_para_cambiar_tipo_color:",ficha_escogida_para_cambiar_tipo_color,"\n",
+            "peon_cambiar: ",peon_cambiar,"\n",
+            "clicado:",clicado,"\n",
+            "color_fichas_mesas:", color_fichas_mesas,"\n",
+            "comprobado: ",comprobado,"\n",
+            "ficha_de_intercambio",ficha_de_intercambio,"\n",
+            "ficha_nueva: ",ficha_nueva,"\n",
+            "entrado_bot_opcion2: ",entrado_bot_opcion_2,
+            "--------------------------------------"
+
+        )
+
+
+
     if animacion==True and ficha_animacion_activa!=variable_borrar and gg==True:
         variable_borrar=ficha_animacion_activa
         print("--------------------------------------")
@@ -1916,6 +1923,9 @@ while jugando:
 
 
 
+#el bot usa fichas muertas para matar
+#en caso de problemas con las cordenadas, el problema no estaria en la funcion restricciones
+#error: no se muere el peon, se queda donde antes
 #el bot usa fichas muertas para matar
 #en caso de problemas con las cordenadas, el problema no estaria en la funcion restricciones
 #error: no se muere el peon, se queda donde antes
