@@ -1391,9 +1391,7 @@ while jugando:
                 num_reina=0
                 for puntuacion_reina in dic_puntuaciones_reina:
                     num_reina+=puntuacion_reina
-                    #print(puntuacion_reina,"reina")
-                
-                #print(num_reina,len(dic_puntuaciones_reina),"num_reina y numero de elementos en diccionario de reina")
+                    
                 
                 if len(dic_puntuaciones_reina)>1:
                     media_reina=num_reina/len(dic_puntuaciones_reina)
@@ -1404,9 +1402,7 @@ while jugando:
                 num_caballo=0
                 for puntuacion_caballo in dic_puntuaciones_caballo:
                     num_caballo+=puntuacion_caballo
-                    #print(puntuacion_caballo,"caballo")
-
-                #print(num_caballo,len(dic_puntuaciones_caballo),"num_caballo y numero de elementos en diccionario de reina")
+                    
 
                 if len(dic_puntuaciones_caballo)>1:
                     media_caballo=num_caballo/len(dic_puntuaciones_caballo)
@@ -1496,6 +1492,7 @@ while jugando:
                         num_turnos_bot+=1
 
                     else:#no matar
+
                         ficha_animacion_activa=ficha_bot
                         cordenada_objetivo=f"{((int(objetivo['victima'][0]))*medida_casilla)+(medida_casilla/4)}:{int(objetivo['victima'][2])*medida_casilla}"
                         cordenada_objetivo_reducida=f"{int(objetivo['victima'][0])}:{int(objetivo['victima'][2])}"
@@ -1507,6 +1504,8 @@ while jugando:
                         turno+=1
 
                         num_turnos_bot+=1
+                    
+                    ficha_en_movimiento=True
 
 
 
@@ -1550,6 +1549,7 @@ while jugando:
                     cordenada_objetivo=None
                     animacion=False
                     revisado=False
+                    ficha_en_movimiento=False
                 else:
                     ficha_animacion_activa=ficha_asesinada
                     cord_objetivo_x=int(diccionario_posiciones_muertas[(turno+1)%2][ficha_asesinada.tipo][0])*medida_casilla
@@ -1580,6 +1580,7 @@ while jugando:
                 cordenada_objetivo=None
                 animacion=False
                 revisado=False
+                ficha_en_movimiento=False
 
         
 #____________________________________________________________________________________________________________________________
@@ -1608,8 +1609,14 @@ while jugando:
             ficha_muerta.actualizar(medida_casilla)
 
 
+    #------BORRAR-----
+    if ficha_en_movimiento==True:
+        print("🟥🟥🟥🟥")
+    else:
+        print("🟩🟩🟩🟩")
+
     #------MESA---------
-    #print(ficha_en_movimiento)
+    
     if ficha_en_movimiento==False:
         for posible_peon in lista_fichas :
             if (posible_peon.tipo == "peon" and posible_peon.columna not in [8,9]):
