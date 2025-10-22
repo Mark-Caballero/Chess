@@ -1950,6 +1950,25 @@ def menu():
     pantalla=pygame.display.set_mode((ancho_tablero,alto_tablero),pygame.RESIZABLE)
     funcionando=True
     fondo=pygame.image.load("fondo.png")
+    fondo=pygame.transform.scale(fondo,(10*medida_casilla,8*medida_casilla))
+
+
+
+    class boton(pygame.sprite.Sprite):
+        def __init__(self,tipo):
+            super().__init__()
+            if tipo=="jugar":
+                boton_imagen=pygame.image.load("jugar.png")
+            elif tipo=="jugar_de_nuevo":
+                boton_imagen=pygame.image.load("jugar_de_nuevo.png")
+            elif tipo=="salir":
+                boton_imagen=pygame.image.load("salir.png")
+            elif tipo=="2_personas":
+                boton_imagen=pygame.image.load("2_personas.png")
+            elif tipo=="bot":
+                boton_imagen=pygame.image.load("bot")
+
+    juego(pantalla,85)
     while funcionando==True:
         
         for evento in pygame.event.get():
@@ -1963,6 +1982,9 @@ def menu():
                 alto_tablero=evento.w-evento.w/5
                 pantalla=pygame.display.set_mode((ancho_tablero,alto_tablero),pygame.RESIZABLE)
                 medida_casilla=ancho_tablero/10
+                fondo=pygame.image.load("fondo.png")
+                fondo=pygame.transform.scale(fondo,(10*medida_casilla,8*medida_casilla))
+
 
         pantalla.blit(fondo,(0,0))
         pygame.display.flip()
