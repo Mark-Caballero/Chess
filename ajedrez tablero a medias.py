@@ -1955,18 +1955,35 @@ def menu():
 
 
     class boton(pygame.sprite.Sprite):
-        def __init__(self,tipo):
+        def __init__(self,nombre_archivo,x,y):
             super().__init__()
-            if tipo=="jugar":
-                boton_imagen=pygame.image.load("jugar.png")
-            elif tipo=="jugar_de_nuevo":
-                boton_imagen=pygame.image.load("jugar_de_nuevo.png")
-            elif tipo=="salir":
-                boton_imagen=pygame.image.load("salir.png")
-            elif tipo=="2_personas":
-                boton_imagen=pygame.image.load("2_personas.png")
-            elif tipo=="bot":
-                boton_imagen=pygame.image.load("bot")
+            boton_imagen=pygame.image.load(nombre_archivo).convert_alpha()
+            self.original=boton_imagen
+            self.rect=self.image.get_rect()
+            self.rect.x=x
+            self.rect.y=y
+            self.alto_original,self.ancho_original=self.image.get_size
+
+
+        def actualizar_boton(self,ancho_nuevo,x,y):
+            self.ancho=ancho_nuevo
+            self.alto=(ancho_nuevo*self.alto_original)/self.ancho_original
+            self.image=pygame.transform.scale(self.original,(self.ancho,self.alto))
+            self.rect.x=x
+            self.rect.y=y
+        
+        def agrandar_boton(self,medida_casilla):
+            sumar=medida_casilla/10
+            self.ancho+=sumar
+            self.alto+=sumar
+            self.image=pygame.transform.scale(self.image,(self.ancho,self.alto))
+
+        def reducir_boton(self,medida_casilla):
+            restar=medida_casilla/10
+            self.ancho+=restar
+            self.alto+=restar
+            self.image=pygame.transform.scale(self.image,(self.ancho,self.alto))
+
 
     juego(pantalla,85)
     while funcionando==True:
