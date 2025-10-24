@@ -3,6 +3,41 @@ pygame.init()
 clock=pygame.time.Clock()
 import math
 
+
+class boton(pygame.sprite.Sprite):
+    def __init__(self,nombre_archivo,x,y):
+        super().__init__()
+        self.original=pygame.image.load(nombre_archivo).convert_alpha()
+        self.image=self.original
+        self.rect=self.original.get_rect()
+        self.rect.x=x
+        self.rect.y=y
+        self.ancho_original,self.alto_original=self.original.get_size()
+
+
+    def actualizar_boton(self,ancho_nuevo,x,y):
+        self.ancho=ancho_nuevo
+        self.alto=(ancho_nuevo*self.alto_original)/self.ancho_original
+        self.image=pygame.transform.scale(self.original,(self.ancho,self.alto))
+        self.rect=self.image.get_rect()
+        self.rect.x=x
+        self.rect.y=y
+        
+    def agrandar_boton(self,medida_casilla):
+        sumar=medida_casilla/10
+        self.ancho+=sumar
+        self.alto+=sumar
+        self.image=pygame.transform.scale(self.image,(self.ancho,self.alto))
+
+    def reducir_boton(self,medida_casilla):
+        restar=medida_casilla/10
+        self.ancho-=restar
+        self.alto-=restar
+        self.image=pygame.transform.scale(self.image,(self.ancho,self.alto))
+
+
+
+
 def juego(pantalla,medida):
     medida_casilla=medida
     casillas_por_fila=8
@@ -1608,11 +1643,6 @@ def juego(pantalla,medida):
                 ficha_muerta.actualizar(medida_casilla)
 
 
-        #------BORRAR-----
-        if ficha_en_movimiento==True:
-            print("🟥🟥🟥🟥")
-        else:
-            print("🟩🟩🟩🟩")
 
         #------MESA---------
         
@@ -1952,40 +1982,21 @@ def menu():
     fondo=pygame.image.load("fondo.png")
     fondo=pygame.transform.scale(fondo,(10*medida_casilla,8*medida_casilla))
 
+    listas_botones=[]
 
+    lista_botones_inicio=pygame.sprite.Group()
+    lista_botones_inicio.add(boton("jugar.png",medida_casilla*3+medida_casilla/4,medida_casilla))
+    lista_botones_inicio.add(boton("salir.png",medida_casilla*3+medida_casilla/4,medida_casilla*3))
 
-    class boton(pygame.sprite.Sprite):
-        def __init__(self,nombre_archivo,x,y):
-            super().__init__()
-            boton_imagen=pygame.image.load(nombre_archivo).convert_alpha()
-            self.original=boton_imagen
-            self.rect=self.image.get_rect()
-            self.rect.x=x
-            self.rect.y=y
-            self.alto_original,self.ancho_original=self.image.get_size
-
-
-        def actualizar_boton(self,ancho_nuevo,x,y):
-            self.ancho=ancho_nuevo
-            self.alto=(ancho_nuevo*self.alto_original)/self.ancho_original
-            self.image=pygame.transform.scale(self.original,(self.ancho,self.alto))
-            self.rect.x=x
-            self.rect.y=y
-        
-        def agrandar_boton(self,medida_casilla):
-            sumar=medida_casilla/10
-            self.ancho+=sumar
-            self.alto+=sumar
-            self.image=pygame.transform.scale(self.image,(self.ancho,self.alto))
-
-        def reducir_boton(self,medida_casilla):
-            restar=medida_casilla/10
-            self.ancho+=restar
-            self.alto+=restar
-            self.image=pygame.transform.scale(self.image,(self.ancho,self.alto))
+    listas_botones.append(lista_botones_inicio)
 
 
     juego(pantalla,85)
+
+    for lista_actual in listas_botones:
+        for boton_actual in lista_actual:
+            boton_actual.actualizar_boton(medida_casilla*5,ancho_tablero/4,alto_tablero/8)
+
     while funcionando==True:
         
         for evento in pygame.event.get():
@@ -1993,6 +2004,7 @@ def menu():
                 funcionando=False
             
             #REDIMENSIO PANTALLA
+            #actualizar_boton(self,ancho_nuevo,x,y):
             if evento.type==pygame.VIDEORESIZE:
                 
                 ancho_tablero=evento.w
@@ -2001,9 +2013,16 @@ def menu():
                 medida_casilla=ancho_tablero/10
                 fondo=pygame.image.load("fondo.png")
                 fondo=pygame.transform.scale(fondo,(10*medida_casilla,8*medida_casilla))
-
+                for lista_actual in listas_botones:
+                    for boton_actual in lista_actual:
+                            boton_actual.actualizar_boton(medida_casilla*5,ancho_tablero/4,alto_tablero/8)
+                
+        
 
         pantalla.blit(fondo,(0,0))
+
+        for lista in listas_botones:
+            lista.draw(pantalla)
         pygame.display.flip()
 
 menu()
