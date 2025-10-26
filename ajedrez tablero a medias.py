@@ -5,14 +5,20 @@ import math
 
 
 class boton(pygame.sprite.Sprite):
-    def __init__(self,nombre_archivo,x,y):
+    def __init__(self,nombre_archivo,x,y,normal):
         super().__init__()
         self.original=pygame.image.load(nombre_archivo).convert_alpha()
         self.image=self.original
         self.rect=self.original.get_rect()
-        self.rect.x=x
-        self.rect.y=y
+        
+        self.rect_x_original=x
+        self.rect_y_original=y
+
+        self.rect.x=self.rect_x_original
+        self.rect.y=self.rect_y_original
         self.ancho_original,self.alto_original=self.original.get_size()
+
+        self.normal=normal
 
 
     def actualizar_boton(self,ancho_nuevo,x,y):
@@ -27,13 +33,14 @@ class boton(pygame.sprite.Sprite):
         sumar=medida_casilla/10
         self.ancho+=sumar
         self.alto+=sumar
-        self.image=pygame.transform.scale(self.image,(self.ancho,self.alto))
+        self.image=pygame.transform.scale(self.original,(self.ancho,self.alto))
 
-    def reducir_boton(self,medida_casilla):
-        restar=medida_casilla/10
-        self.ancho-=restar
-        self.alto-=restar
-        self.image=pygame.transform.scale(self.image,(self.ancho,self.alto))
+
+    
+
+
+
+
 
 
 
@@ -317,20 +324,36 @@ def juego(pantalla,medida):
         
 
 
-
     def movimiento_realista(cord_a,cord_b,medida_casilla):
-        x_a,y_a=filtrar(cord_a)
-
-        x_b,y_b=filtrar(cord_b)
-
-        movimiento_x=x_b-x_a#pixeles horizontales que ha de recorrer 
-        movimiento_y=y_b-y_a#pixeles verticales que ha de recorrer
+            x_a,y_a=filtrar(cord_a)
 
 
-        movimiento_x/=medida_casilla*2
-        movimiento_y/=medida_casilla*2
+            x_b,y_b=filtrar(cord_b)
 
-        return movimiento_x*2,movimiento_y*2
+
+            movimiento_x=x_b-x_a#pixeles horizontales que ha de recorrer
+            movimiento_y=y_b-y_a#pixeles verticales que ha de recorrer
+
+
+
+
+            movimiento_x/=medida_casilla
+            movimiento_y/=medida_casilla
+
+
+            if movimiento_x-int(movimiento_x)>=0.5:
+                movimiento_x=int(movimiento_x)+1
+            else:
+                movimiento_x=int(movimiento_x)
+        
+            if movimiento_y-int(movimiento_y)>=0.5:
+                movimiento_y=int(movimiento_y)+1
+            else:
+                movimiento_y=int(movimiento_y)
+
+
+            return movimiento_x,movimiento_y
+
 
 
 
@@ -972,9 +995,7 @@ def juego(pantalla,medida):
         #lista_fichas.add(ficha("blanco", medida_casilla, "peon", lista_fichas.sprites()[0].columna, lista_fichas.sprites()[0].fila, False))
         #lista_fichas.remove(lista_fichas.sprites()[0])
 
-
-
-        #torres negras
+    #torres negras
         torre_negra=ficha("negro",medida_casilla,"torre",x,y,False)
         lista_fichas.add(torre_negra)
         torre_negra=ficha("negro",medida_casilla,"torre",x+7,y,False)
@@ -1025,6 +1046,8 @@ def juego(pantalla,medida):
         #reina blanca
         reina_blanca=ficha("blanco",medida_casilla,"reina",x+3,y+7,False)
         lista_fichas.add(reina_blanca)
+
+
 
     lista_fichas_muertas=pygame.sprite.Group()
 
@@ -1973,6 +1996,7 @@ def juego(pantalla,medida):
         pygame.display.flip()
 
 
+
 def menu():
     medida_casilla=85
     ancho_tablero=medida_casilla*10
@@ -1985,17 +2009,40 @@ def menu():
     listas_botones=[]
 
     lista_botones_inicio=pygame.sprite.Group()
-    lista_botones_inicio.add(boton("jugar.png",medida_casilla*3+medida_casilla/4,medida_casilla))
-    lista_botones_inicio.add(boton("salir.png",medida_casilla*3+medida_casilla/4,medida_casilla*3))
+    lista_botones_inicio.add(boton("jugar.png",medida_casilla*3+medida_casilla/4,medida_casilla,True))
+    lista_botones_inicio.add(boton("salir.png",medida_casilla*3+medida_casilla/4,medida_casilla*3,True))
 
     listas_botones.append(lista_botones_inicio)
 
+    lista_botones_jugar=pygame.sprite.Group()
+    lista_botones_jugar.add(boton("jugar con bot.png",medida_casilla*3+medida_casilla/4,medida_casilla,True))
+    lista_botones_jugar.add(boton("2 jugadores.png",medida_casilla*3+medida_casilla/4,medida_casilla*3,True))
+
+    listas_botones.append(lista_botones_jugar)
+
+    lista_botones_jugar2=pygame.sprite.Group()
+    lista_botones_jugar2.add(boton("boton_blanco.png",medida_casilla*3+medida_casilla/4,medida_casilla,False))
+    lista_botones_jugar2.add(boton("boton_negro.png",medida_casilla*6+medida_casilla/4,medida_casilla,False))
+    lista_botones_jugar2.add(boton("2 jugadores.png",medida_casilla*3+medida_casilla/4,medida_casilla*3,True))
+    
+    listas_botones.append(lista_botones_jugar2)
 
     juego(pantalla,85)
 
     for lista_actual in listas_botones:
+        multiplicar_medida_casilla=1
         for boton_actual in lista_actual:
-            boton_actual.actualizar_boton(medida_casilla*5,ancho_tablero/4,alto_tablero/8)
+            if boton_actual.normal==True:
+                boton_actual.actualizar_boton(medida_casilla*5,medida_casilla*2.5,medida_casilla*multiplicar_medida_casilla)
+                multiplicar_medida_casilla+=2.5
+            else:
+                boton_actual.actualizar_boton(medida_casilla*1.5,medida_casilla*2.5,medida_casilla)
+
+
+
+    situacion_menu=0
+    boton_tocando=None
+    
 
     while funcionando==True:
         
@@ -2014,15 +2061,72 @@ def menu():
                 fondo=pygame.image.load("fondo.png")
                 fondo=pygame.transform.scale(fondo,(10*medida_casilla,8*medida_casilla))
                 for lista_actual in listas_botones:
+                    multiplicar_medida_casilla=1
                     for boton_actual in lista_actual:
-                            boton_actual.actualizar_boton(medida_casilla*5,ancho_tablero/4,alto_tablero/8)
+                        if boton_actual.normal==True:
+                            boton_actual.actualizar_boton(medida_casilla*5,medida_casilla*2.5,medida_casilla*multiplicar_medida_casilla)
+                            multiplicar_medida_casilla+=2.5
+                        else:
+                            boton_actual.actualizar_boton(medida_casilla*1.5,medida_casilla*2.5,medida_casilla)
                 
-        
+
+        lista_botones_actuales=listas_botones[situacion_menu]
+
+
+        mouse_presionado=pygame.mouse.get_pressed()
+        mouse_pos=pygame.mouse.get_pos()
+        if boton_tocando==None:
+            for boton_actual in lista_botones_actuales:
+                if boton_actual.rect.collidepoint(mouse_pos):
+                    boton_tocando=boton_actual
+                    boton_tocando.agrandar_boton(medida_casilla)       
+                    break
+            
+        if boton_tocando!=None:
+            #reducir si no toca
+            if not boton_tocando.rect.collidepoint(mouse_pos):
+                multiplicar_medida_casilla=1
+                for boton_actual in lista_actual:
+                    if boton_actual.normal==True:
+                        print("🟧🟧🟧")
+                        boton_actual.actualizar_boton(medida_casilla*5,medida_casilla*2.5,medida_casilla*multiplicar_medida_casilla)
+                        multiplicar_medida_casilla+=2.5
+                    else:
+                        boton_actual.actualizar_boton(medida_casilla*1.5,medida_casilla*2.5,medida_casilla)
+                boton_tocando=None
+            
+            #click
+            else:
+                if mouse_presionado[0]==True:
+                    if situacion_menu==0:
+                        num=0
+                        for boton_actual in listas_botones[0]:
+                            if boton_actual==boton_tocando and num==0:
+                                situacion_menu=1
+
+                            elif boton_actual==boton_tocando and num==1:
+                                funcionando=False
+                            num+=1
+
+
+
+                    elif situacion_menu==1:
+                        num=0 
+                        for boton_actual in listas_botones[1]:
+                            if boton_actual==boton_tocando and num==0:
+                                situacion_menu=2
+
+                            elif boton_actual==boton_tocando and num==1:
+                                funcionando=False
+                                juego(pantalla,85)
+                            num+=1
+
+            
+            
 
         pantalla.blit(fondo,(0,0))
 
-        for lista in listas_botones:
-            lista.draw(pantalla)
+        lista_botones_actuales.draw(pantalla)
         pygame.display.flip()
 
 menu()
