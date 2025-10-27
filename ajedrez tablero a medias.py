@@ -2031,12 +2031,19 @@ def menu():
 
     for lista_actual in listas_botones:
         multiplicar_medida_casilla=1
+        num_raro=1
         for boton_actual in lista_actual:
             if boton_actual.normal==True:
-                boton_actual.actualizar_boton(medida_casilla*5,medida_casilla*2.5,medida_casilla*multiplicar_medida_casilla)
-                multiplicar_medida_casilla+=2.5
+                if lista_actual!=listas_botones[2]:
+                    boton_actual.actualizar_boton(medida_casilla*5,medida_casilla*2.5,medida_casilla*multiplicar_medida_casilla)
+                    multiplicar_medida_casilla=3.5
+                            
+                else:
+                    boton_actual.actualizar_boton(medida_casilla*5,medida_casilla*2.5,medida_casilla*3.5)####
+
             else:
-                boton_actual.actualizar_boton(medida_casilla*1.5,medida_casilla*2.5,medida_casilla)
+                boton_actual.actualizar_boton(medida_casilla*1.5,medida_casilla*2.5*num_raro,medida_casilla)
+                num_raro=2.4
 
 
 
@@ -2062,12 +2069,19 @@ def menu():
                 fondo=pygame.transform.scale(fondo,(10*medida_casilla,8*medida_casilla))
                 for lista_actual in listas_botones:
                     multiplicar_medida_casilla=1
+                    num_raro=1
                     for boton_actual in lista_actual:
                         if boton_actual.normal==True:
-                            boton_actual.actualizar_boton(medida_casilla*5,medida_casilla*2.5,medida_casilla*multiplicar_medida_casilla)
-                            multiplicar_medida_casilla+=2.5
+                            if lista_actual!=listas_botones[2]:
+                                boton_actual.actualizar_boton(medida_casilla*5,medida_casilla*2.5,medida_casilla*multiplicar_medida_casilla)
+                                multiplicar_medida_casilla=3.5
+                            
+                            else:
+                                boton_actual.actualizar_boton(medida_casilla*5,medida_casilla*2.5,medida_casilla*3.5)####
+
                         else:
-                            boton_actual.actualizar_boton(medida_casilla*1.5,medida_casilla*2.5,medida_casilla)
+                            boton_actual.actualizar_boton(medida_casilla*1.5,medida_casilla*2.5*num_raro,medida_casilla)
+                            num_raro=2.4
                 
 
         lista_botones_actuales=listas_botones[situacion_menu]
@@ -2085,14 +2099,24 @@ def menu():
         if boton_tocando!=None:
             #reducir si no toca
             if not boton_tocando.rect.collidepoint(mouse_pos):
-                multiplicar_medida_casilla=1
-                for boton_actual in lista_actual:
-                    if boton_actual.normal==True:
-                        print("🟧🟧🟧")
-                        boton_actual.actualizar_boton(medida_casilla*5,medida_casilla*2.5,medida_casilla*multiplicar_medida_casilla)
-                        multiplicar_medida_casilla+=2.5
-                    else:
-                        boton_actual.actualizar_boton(medida_casilla*1.5,medida_casilla*2.5,medida_casilla)
+                for lista_actual in listas_botones:
+                    multiplicar_medida_casilla=1
+                    num_raro=1
+                    for boton_actual in lista_actual:
+                        if boton_actual.normal==True:
+                            if lista_actual!=listas_botones[2]:
+                                boton_actual.actualizar_boton(medida_casilla*5,medida_casilla*2.5,medida_casilla*multiplicar_medida_casilla)
+                                multiplicar_medida_casilla=3.5
+                            
+                            else:
+                                boton_actual.actualizar_boton(medida_casilla*5,medida_casilla*2.5,medida_casilla*3.5)####
+
+                        else:
+                            boton_actual.actualizar_boton(medida_casilla*1.5,medida_casilla*2.5*num_raro,medida_casilla)
+                            num_raro=2.4
+
+                
+                
                 boton_tocando=None
             
             #click
@@ -2120,9 +2144,29 @@ def menu():
                                 funcionando=False
                                 juego(pantalla,85)
                             num+=1
+                    
+                    elif situacion_menu==2:
+                        for boton_actual in listas_botones[2]:
+                            if boton_actual==boton_tocando and num==0:
+                                pass #jugar bot
+
+                            elif boton_actual==boton_tocando and num==1:
+                                pass #jugar bot
+
+                            elif boton_actual==boton_tocando and num==2:
+                                pass #jugar individual
+                            num+=1
+                            
+
+
+
+
+
+
 
             
-            
+
+
 
         pantalla.blit(fondo,(0,0))
 
