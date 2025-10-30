@@ -1104,7 +1104,7 @@ def juego(pantalla,medida,colorbot):
                 self.original=pygame.transform.scale(self.original,(medida_casilla*3,medida_casilla*4))
             else:
                 self.original=pygame.image.load("tabla_botones.png").convert_alpha()
-                self.original=pygame.transform.scale(self.original,(medida_casilla*3,medida_casilla*3*0.77))
+                self.original=pygame.transform.scale(self.original,(medida_casilla*3,medida_casilla*3))
 
             self.tipo=tipo
             self.image=self.original
@@ -1116,8 +1116,7 @@ def juego(pantalla,medida,colorbot):
             if self.tipo==1:
                 self.image=pygame.transform.scale(self.original,(medida_casilla*3,medida_casilla*4))
             else:
-                self.image=pygame.transform.scale(self.original,(medida_casilla*6,medida_casilla*6*0.77))
-                print("actualizado")
+                self.image=pygame.transform.scale(self.original,(medida_casilla*6,medida_casilla*5.7))
             
             self.rect.x=x
             self.rect.y=y
@@ -1390,6 +1389,8 @@ def juego(pantalla,medida,colorbot):
     #tabla_final
     tabla_final=mesa(medida_casilla,medida_casilla,2)
     y_tabla_final=medida_casilla*(-5.5)
+    tabla_final_colocada=False
+    boton_final_tocado=None
     
 
 
@@ -1449,7 +1450,7 @@ def juego(pantalla,medida,colorbot):
                 mouse_cord=f"{int(mouse[0]//medida_casilla)}:{int(mouse[1]//medida_casilla)}"
                 boton=pygame.mouse.get_pressed()
                
-                if boton[0]==True and ficha_seleccionada==None:#primer click
+                if boton[0]==True and ficha_seleccionada==None and tabla_final_colocada==False:#primer click
 
 
                     for pieza in lista_fichas:#para cada ficha de la lista de fichas
@@ -1514,7 +1515,7 @@ def juego(pantalla,medida,colorbot):
 
 
                             break#salimos del for
-                if boton[0]==True and ficha_seleccionada!=None:
+                if boton[0]==True and ficha_seleccionada!=None and tabla_final_colocada==False:
                     ficha_en_movimiento=True
 
 
@@ -1682,7 +1683,7 @@ def juego(pantalla,medida,colorbot):
 
 
 
-            elif bot_==True and (turno%2==1 and color_bot=="negro" or turno%2==0 and color_bot=="blanco") and animacion==False and ficha_animacion_activa==None:
+            elif bot_==True and (turno%2==1 and color_bot=="negro" or turno%2==0 and color_bot=="blanco") and animacion==False and ficha_animacion_activa==None and tabla_final_colocada==False:
 
 
 
@@ -2287,12 +2288,13 @@ def juego(pantalla,medida,colorbot):
                 partida_terminada=True#ha ganado el negro
         
 
-
+        y_objetivo_mesa=(medida_casilla*2-medida_casilla/2)
         if partida_terminada==False:
-            y_objetivo_mesa=(medida_casilla*2-medida_casilla/2)
-            if y_tabla_final//medida_casilla!=y_objetivo_mesa//medida_casilla:
+            
+            if y_tabla_final//medida_casilla!=y_objetivo_mesa//medida_casilla and tabla_final_colocada==False:
                 y_tabla_final+=6
             else:
+                tabla_final_colocada=True
                 y_tabla_final=y_objetivo_mesa
 
 
@@ -2307,17 +2309,45 @@ def juego(pantalla,medida,colorbot):
                     
             tabla_final.actualizar_mesa(medida_casilla,medida_casilla*2-1,y_tabla_final)
             
-            hh=1
-            for boton_final in lista_botones:
-                boton_final.actualizar_boton(medida_casilla*5,tabla_final.rect.x+medida_casilla/2,(tabla_final.rect.y+medida_casilla/2)*hh)
-                hh+=1.1
+            if boton_final_tocado==None:
+                h=0
+                for boton_final in lista_botones:
+                    boton_final.actualizar_boton(medida_casilla*5,tabla_final.rect.x+medida_casilla/2,(tabla_final.rect.y+medida_casilla/2)+(medida_casilla*2.2)*h)
+                    h=1
 
+            
+            if tabla_final_colocada==True and boton_final_tocado==None:
+                
+                for boton_final in lista_botones:
+                    if boton_final.rect.collidepoint(mouse):
+                        boton_final_tocado=boton_final
+                        boton_final_tocado.agrandar_boton(medida_casilla)
+                        break
+            
+            
+                    
+                        
+
+            
+            if boton_final_tocado!=None:
+                if boton_final_tocado.rect.collidepoint(mouse)==False:
+                    boton_final_tocado=None
+
+                else:
+                    i=0
+                    for boton_final in lista_botones:
+                        if boton_final==boton_final_tocado and i==0:
+                            pass #devolver menu pa volver a jugar
+                        else:
+                            pass #volver al menu
+
+            
+            
             lista_botones.draw(pantalla)
             
 
 
 
-                
 
             
 
