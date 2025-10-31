@@ -1442,6 +1442,22 @@ def juego(pantalla,medida,colorbot):
 
 
 
+        
+        num_reyes=[0,None]
+        for posible_rey in lista_fichas:
+            if posible_rey.tipo=="rey":
+                num_reyes[0]+=1
+                num_reyes[1]=posible_rey.color
+            
+        
+        if num_reyes[0]<2:
+            if num_reyes[1]=="blanco":
+                partida_terminada=True#ha ganado el blanco
+            else:
+                partida_terminada=True#ha ganado el negro
+
+
+
 
     #:::::::::::::MOVER FICHA::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         if animacion==False or animacion==True:
@@ -1683,7 +1699,7 @@ def juego(pantalla,medida,colorbot):
 
 
 
-            elif bot_==True and (turno%2==1 and color_bot=="negro" or turno%2==0 and color_bot=="blanco") and animacion==False and ficha_animacion_activa==None and tabla_final_colocada==False:
+            elif bot_==True and (turno%2==1 and color_bot=="negro" or turno%2==0 and color_bot=="blanco") and animacion==False and ficha_animacion_activa==None and partida_terminada==False:
 
 
 
@@ -2274,22 +2290,10 @@ def juego(pantalla,medida,colorbot):
 
 
 
-        num_reyes=[0,None]
-        for posible_rey in lista_fichas:
-            if posible_rey.tipo=="rey":
-                num_reyes[0]+=1
-                num_reyes[1]=posible_rey.color
-            
-        
-        if num_reyes[0]<2:
-            if num_reyes[1]=="blanco":
-                partida_terminada=True#ha ganado el blanco
-            else:
-                partida_terminada=True#ha ganado el negro
         
 
         y_objetivo_mesa=(medida_casilla*2-medida_casilla/2)
-        if partida_terminada==False:
+        if partida_terminada==True:
             
             if y_tabla_final//medida_casilla!=y_objetivo_mesa//medida_casilla and tabla_final_colocada==False:
                 y_tabla_final+=6
@@ -2326,20 +2330,21 @@ def juego(pantalla,medida,colorbot):
             
             
                     
-                        
 
             
             if boton_final_tocado!=None:
                 if boton_final_tocado.rect.collidepoint(mouse)==False:
                     boton_final_tocado=None
 
-                else:
+                elif pygame.mouse.get_pressed()[0]==True:
                     i=0
                     for boton_final in lista_botones:
                         if boton_final==boton_final_tocado and i==0:
-                            pass #devolver menu pa volver a jugar
+                            juego(pantalla,medida_casilla,color_bot) #devolver menu pa volver a jugar
+                            jugando=False
                         else:
-                            pass #volver al menu
+                            return menu(medida_casilla) #volver al menu
+                        i+=1
 
             
             
@@ -2417,8 +2422,8 @@ def juego(pantalla,medida,colorbot):
 
 
 
-def menu():
-    medida_casilla=85
+def menu(medida):
+    medida_casilla=medida
     ancho_tablero=medida_casilla*10
     alto_tablero=medida_casilla*8
     pantalla=pygame.display.set_mode((ancho_tablero,alto_tablero),pygame.RESIZABLE)
@@ -2596,16 +2601,20 @@ def menu():
                             if boton_actual==boton_tocando and num==0:
                                 print("🟧")
                                 resultado=juego(pantalla,medida_casilla,"negro") #jugar bot
+                                print("⬜")
+                                funcionando=False
 
 
                             elif boton_actual==boton_tocando and num==1:
                                 print("🟩")
                                 resultado=juego(pantalla,medida_casilla,"blanco") #jugar bot
+                                funcionando=False
 
 
                             elif boton_actual==boton_tocando and num==2:
                                 print("🟦")
                                 resultado=juego(pantalla,medida_casilla,None) #jugar individual
+                                funcionando=False
                             num+=1
                             
                     print(situacion_menu)
@@ -2620,7 +2629,7 @@ def menu():
         pygame.display.flip()
 
 
-menu()
+menu(85)
 
 
 
