@@ -5,7 +5,6 @@ import math
 
 
 
-
 class boton_(pygame.sprite.Sprite):
     def __init__(self,nombre_archivo,x,y,normal):
         super().__init__()
