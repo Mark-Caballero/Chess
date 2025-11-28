@@ -58,8 +58,7 @@ def juego(pantalla,medida,colorbot):
     y=0
 
 
-    lista_opciones=[]#coordenada que se pueden utilizar para la ficha seleccionada
-
+    lista_opciones=[]
 
     def movimiento_valido(lista_casillas_ocupadas,lista_coordenadas, tipo_ficha):
         if tipo_ficha=="caballo":
@@ -137,7 +136,6 @@ def juego(pantalla,medida,colorbot):
             for c in range(len(lista_x)-1):
                 lista_y.append(y_inicial)
         
-        #print(lista_x,"·······",lista_y)
         lista_final=[]
         
         longitud = min(len(lista_x), len(lista_y))
@@ -147,7 +145,6 @@ def juego(pantalla,medida,colorbot):
         
 
 
-        #print(lista_final)
         return lista_final
 
 
@@ -157,7 +154,7 @@ def juego(pantalla,medida,colorbot):
         return x,y
 
 
-    def movimiento_peon(peon,lista_posiciones_equipo_rival,lista_posiciones_equipo_peon,lista_opciones_peon):######################################
+    def movimiento_peon(peon,lista_posiciones_equipo_rival,lista_posiciones_equipo_peon,lista_opciones_peon):
         lista_final=[]
         for cord in lista_opciones_peon:
             if cord not in lista_posiciones_equipo_rival and cord not in lista_posiciones_equipo_peon:
@@ -177,7 +174,7 @@ def juego(pantalla,medida,colorbot):
 
 
         pos_peon=f"{peon.columna}:{peon.fila}"
-        #print("pos peon segun funcion movimiento peon   ",pos_peon)
+        
         if peon.color=="negro" and pos_peon in ["0:1","1:1","2:1","3:1","4:1","5:1","6:1","7:1"] and f"{pos_peon[0]}:{int(pos_peon[2])+2}" not in lista_posiciones_equipo_rival and f"{pos_peon[0]}:{int(pos_peon[2])+1}" not in lista_posiciones_equipo_rival and f"{pos_peon[0]}:{int(pos_peon[2])+2}" not in lista_posiciones_equipo_peon and f"{pos_peon[0]}:{int(pos_peon[2])+1}" not in lista_posiciones_equipo_peon :
             lista_final.append(f"{peon.columna}:{peon.fila+2}")
                 
@@ -187,7 +184,6 @@ def juego(pantalla,medida,colorbot):
             lista_final.append(f"{peon.columna}:{peon.fila-2}")
 
 
-        #print("lista final por parte de funcion movimiento peon     ", lista_final)
 
 
         return lista_final
@@ -206,8 +202,7 @@ def juego(pantalla,medida,colorbot):
         y=ficha_bot.fila
         dic={}
         lista_final=[]
-        #opcion 1= de menor a mayor
-        #opcion 2= de mayor a menor
+
         for lista_cords in lista_cords_por_angulos:
             if len(lista_cords)>=1:
                 if int(lista_cords[0][0])>x and int(lista_cords[0][2])<y:
@@ -245,7 +240,7 @@ def juego(pantalla,medida,colorbot):
                 for num in lista_keys:
                     lista.append(dic[num])
                 lista_final.append(lista)
-                #print(lista,"                            LISTA")
+        
         return lista_final
         
                     
@@ -261,9 +256,7 @@ def juego(pantalla,medida,colorbot):
 
 
         lista_cords_bot=eliminar_cords_no_validas2(lista_cords_bot)
-        #print("‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖‖")
-        #print(tipo_ficha, f"{ficha_bot.columna}:{ficha_bot.fila}")
-        #print(lista_cords_bot, "lista del principio")
+        
         for cord in lista_cords_bot:
             if int(cord[0])==int(pos_ficha[0]) and int(cord[2])>int(pos_ficha[2]):
                 lista_cords_por_angulos[0].append(cord)
@@ -294,15 +287,13 @@ def juego(pantalla,medida,colorbot):
                 lista_cords_por_angulos[7].append(cord)
 
 
-        #print(lista_cords_por_angulos,"               lista_cords_por_angulos")
+        
         for i in range(len(lista_cords_por_angulos)):
             lista_cords_por_angulos[i] = eliminar_cords_no_validas2(lista_cords_por_angulos[i])
-        #for lista_cords in lista_cords_por_angulos:
-        #   lista_cords=eliminar_cords_no_validas2(lista_cords)
+    
         
         lista_cords_por_angulos=ordenar_cords_lista(lista_cords_por_angulos,ficha_bot)
-        #[['7:1', '7:2', '7:3', '7:4', '7:5', '7:6', '7:7'], [], [], [], [], [], ['0:0', '1:0', '2:0', '3:0', '4:0', '5:0', '6:0'], []]
-        #print(lista_cords_por_angulos,"               lista_cords_por_angulos")
+        
 
 
         lista_final=[]
@@ -314,19 +305,15 @@ def juego(pantalla,medida,colorbot):
                 if cordenada in lista_posiciones_rivales and parar==False:
                     lista_append.append(cordenada)
                     parar=True
-                    #print(f"{cordenada} 🟧")
+                    
 
 
                 elif cordenada not in lista_posiciones_rivales and cordenada not in lista_posiciones_bots and parar==False:
                     lista_append.append(cordenada)
-                    #print(f"{cordenada} 🟩")
                 elif cordenada in lista_posiciones_bots:
                     parar=True
-                    #print(f"{cordenada} 🟨")
-
 
                 if parar==True:
-                    #print(f"🟥")
                     break
 
 
@@ -334,7 +321,6 @@ def juego(pantalla,medida,colorbot):
 
             for elemento in lista_append:
                 lista_final.append(elemento)
-            #lista_final.append(lista_append)
 
 
         
@@ -369,48 +355,12 @@ def juego(pantalla,medida,colorbot):
 
     def movimiento_realista(cord_a,cord_b,medida_casilla):
         x_a,y_a=filtrar(cord_a)
-
-
-
-
         x_b,y_b=filtrar(cord_b)
-
-
-
-
         movimiento_x=x_b-x_a#pixeles horizontales que ha de recorrer
         movimiento_y=y_b-y_a#pixeles verticales que ha de recorrer
-
-
-
-
         movimiento_x/=medida_casilla
         movimiento_y/=medida_casilla
-
-
-
-
-        #if movimiento_x-int(movimiento_x)>=0.5:
-        #    movimiento_x=int(movimiento_x)+1
-        #else:
-        #    movimiento_x=int(movimiento_x)
-    
-        #if movimiento_y-int(movimiento_y)>=0.5:
-        #    movimiento_y=int(movimiento_y)+1
-        #else:
-        #    movimiento_y=int(movimiento_y)
-
-
-        print(round(movimiento_x),round(movimiento_y))
         return round(movimiento_x),round(movimiento_y)
-
-
-
-
-
-
-
-
 
 
 
@@ -480,13 +430,13 @@ def juego(pantalla,medida,colorbot):
 
 
     def bot(lista_fichas,lista_casillas_ocupadas,color,medida_casilla):
-        lista_blancas=[]#lista de fichas blancas
-        lista_negras=[]#lista de fichas negras
+        lista_blancas=[]
+        lista_negras=[]
         
         dic_peones=diccionario_peones
         valores_fichas={"rey":9999,"reina":9,"torre":5,"alfil":3,"caballo":3,"peon":1}
         
-        for ficha in lista_fichas:#cada ficha de la lista de TODAS las fichas
+        for ficha in lista_fichas:
             if ficha.color=="blanco":
                 lista_blancas.append(ficha)
             else:
@@ -511,8 +461,7 @@ def juego(pantalla,medida,colorbot):
     #_____________________________________________________________________________________________________________________
         lista_opciones_finales=[]
         
-                #________________________________________________________________
-            #ficha_bot ataca a ficha rival
+
         for ficha_bot_actual in lista_bot:
             lista_opciones_ficha_bot_actual=[]
             lista_opciones_ficha_bot_actual=ficha_bot_actual.restricciones(False)
@@ -526,31 +475,26 @@ def juego(pantalla,medida,colorbot):
                 lista_opciones_ficha_bot_actual=eliminar_cords_no_validas2(lista_opciones_ficha_bot_actual)
 
 
-                #print(lista_opciones_ficha_bot_actual,"         lista opciones antes de eliminar fichas no validas")
+                
                 lista_opciones_ficha_bot_actual=eliminar_cords_ocupadas_caballo(lista_opciones_ficha_bot_actual,lista_posiciones_bots)
-                #print(lista_opciones_ficha_bot_actual, "          caballo lista opciones")
+                
             
             elif ficha_bot_actual.tipo=="rey":
                 lista_opciones_ficha_bot_actual=movimiento_rey(lista_posiciones_bots,lista_opciones_ficha_bot_actual)
-                #print("restriccion hecha a rey")
-                #print(lista_opciones_ficha_bot_actual)
+                
 
 
             else:
                 lista_opciones_ficha_bot_actual=eliminar_cords_no_validas2(lista_opciones_ficha_bot_actual)
                 lista_opciones_ficha_bot_actual=movimiento_peon(ficha_bot_actual,lista_posiciones_rivales,lista_posiciones_bots,lista_opciones_ficha_bot_actual)
-                #print(f"{ficha_bot_actual.columna}:{ficha_bot_actual.fila}  ---",lista_opciones_ficha_bot_actual)
+                
             
             
             for cordenada in lista_opciones_ficha_bot_actual:
                 cordenada_peligrosa = False 
                 for ficha_rival_cordenada in lista_rival:
                     if f"{ficha_rival_cordenada.columna}:{ficha_rival_cordenada.fila}"==cordenada:
-                    #si la cordenada de opciones de la ficha bot es igual a la posicion de la ficha rival que se esta revisando:
-            #________________________________________________________________       
-
-
-            #ficha rival2 ataca a ficha bot
+                    
 
 
                         for ficha_rival in lista_rival:
@@ -561,7 +505,6 @@ def juego(pantalla,medida,colorbot):
 
                             if ficha_rival.tipo!="caballo" and ficha_rival.tipo!="peon" and ficha_rival.tipo!="rey":
                                 lista_opciones_ficha_rival_actual=cords_atravesadas_bot(lista_opciones_ficha_rival_actual,lista_posiciones_bots,lista_posiciones_rivales,ficha_rival)
-                            #lista_opciones_ficha_rival_actual=eliminar_cords_no_validas(lista_opciones_ficha_rival_actual,ficha_rival,lista_bot,lista_rival)
                             elif ficha_rival.tipo=="caballo":
                                 lista_opciones_ficha_rival_actual=eliminar_cords_no_validas2(lista_opciones_ficha_rival_actual)
                                 lista_opciones_ficha_rival_actual=eliminar_cords_ocupadas_caballo(lista_opciones_ficha_rival_actual,lista_posiciones_rivales)
@@ -581,7 +524,6 @@ def juego(pantalla,medida,colorbot):
                             for opcion_rival in lista_opciones_ficha_rival_actual:
                                 if opcion_rival==cordenada:
                                     valor_jugada=(valores_fichas[ficha_rival.tipo]-valores_fichas[ficha_bot_actual.tipo])
-                                    #valor jugada= la ficha que ha matado menos a la que han matado
                                     victima_cord=f"{ficha_rival_cordenada.columna}:{ficha_rival_cordenada.fila}"
                                     lista_opciones_finales.append({"atacante":ficha_bot_actual,"victima":victima_cord,"valor jugada":valor_jugada,"lista rival":lista_rival})
                                     cordenada_peligrosa=True
@@ -618,7 +560,6 @@ def juego(pantalla,medida,colorbot):
 
 
 
-                            #lista_opciones_ficha_rival_=eliminar_cords_no_validas(lista_opciones_ficha_rival_,ficha_rival_,lista_bot,lista_rival)
 
 
                             for opcion in lista_opciones_ficha_rival_:
@@ -802,15 +743,7 @@ def juego(pantalla,medida,colorbot):
         
         opcion_final=lista_opciones_finales_limpia[0]
         for opcion in lista_opciones_finales_limpia:
-    #-----------------------------------------------------------------        
-            #if opcion["atacante"].tipo!="rey":
-            #    print(opcion["atacante"].tipo,"  : ",opcion)
-            #else:
-            #    print("------------------------------------")
-            #    print(opcion["atacante"].tipo,"  : ",opcion)
-            #    print("------------------------------------")
-    #-----------------------------------------------------------------
-            #print(len(lista_opciones_finales_limpia))
+
             if opcion["valor jugada"]>opcion_final["valor jugada"]:
                 opcion_final=opcion
 
@@ -873,7 +806,6 @@ def juego(pantalla,medida,colorbot):
     def convertir(coordenada):
         x,y=coordenada.split(":")
         return int(x),int(y)
-    #para convertir las coordenadas devueltas por "restricciones" en tuplas de enteros   
 
 
 
@@ -994,10 +926,10 @@ def juego(pantalla,medida,colorbot):
             
             if self.tipo=="torre":
                 for i in range(1,8):
-                    lista_opciones.append(f"{self.columna}:{self.fila+1*i}")#horizontal
-                    lista_opciones.append(f"{self.columna}:{self.fila-1*i}")#horizontal
-                    lista_opciones.append(f"{self.columna+1*i}:{self.fila}")#vertical
-                    lista_opciones.append(f"{self.columna-1*i}:{self.fila}")#vertical
+                    lista_opciones.append(f"{self.columna}:{self.fila+1*i}")
+                    lista_opciones.append(f"{self.columna}:{self.fila-1*i}")
+                    lista_opciones.append(f"{self.columna+1*i}:{self.fila}")
+                    lista_opciones.append(f"{self.columna-1*i}:{self.fila}")
             
             if self.tipo == "caballo":
                 lista_opciones.append(f"{self.columna + 1 * 2}:{self.fila + 1}") 
@@ -1014,21 +946,21 @@ def juego(pantalla,medida,colorbot):
 
 
                 for i in range(1,8):
-                    lista_opciones.append(f"{self.columna + 1 * i}:{self.fila + 1 * i}")  # abajo derecha
-                    lista_opciones.append(f"{self.columna + 1 * i}:{self.fila - 1 * i}")  # abajo izquierda
-                    lista_opciones.append(f"{self.columna - 1 * i}:{self.fila + 1 * i}")  # arriba derecha
-                    lista_opciones.append(f"{self.columna - 1 * i}:{self.fila - 1 * i}") # arriba izquierda
+                    lista_opciones.append(f"{self.columna + 1 * i}:{self.fila + 1 * i}")
+                    lista_opciones.append(f"{self.columna + 1 * i}:{self.fila - 1 * i}")
+                    lista_opciones.append(f"{self.columna - 1 * i}:{self.fila + 1 * i}")
+                    lista_opciones.append(f"{self.columna - 1 * i}:{self.fila - 1 * i}")
             
             if self.tipo == "reina":
                 for i in range(1,8):
-                    lista_opciones.append(f"{self.columna}:{self.fila+1*i}")#horizontal
-                    lista_opciones.append(f"{self.columna}:{self.fila-1*i}")#horizontal
-                    lista_opciones.append(f"{self.columna+1*i}:{self.fila}")#vertical
-                    lista_opciones.append(f"{self.columna-1*i}:{self.fila}")#vertical
-                    lista_opciones.append(f"{self.columna + 1 * i}:{self.fila + 1 * i}")  # abajo derecha
-                    lista_opciones.append(f"{self.columna + 1 * i}:{self.fila - 1 * i}")  # abajo izquierda
-                    lista_opciones.append(f"{self.columna - 1 * i}:{self.fila + 1 * i}")  # arriba derecha
-                    lista_opciones.append(f"{self.columna - 1 * i}:{self.fila - 1 * i}") # arriba izquierda
+                    lista_opciones.append(f"{self.columna}:{self.fila+1*i}")
+                    lista_opciones.append(f"{self.columna}:{self.fila-1*i}")
+                    lista_opciones.append(f"{self.columna+1*i}:{self.fila}")
+                    lista_opciones.append(f"{self.columna-1*i}:{self.fila}")
+                    lista_opciones.append(f"{self.columna + 1 * i}:{self.fila + 1 * i}")
+                    lista_opciones.append(f"{self.columna + 1 * i}:{self.fila - 1 * i}")
+                    lista_opciones.append(f"{self.columna - 1 * i}:{self.fila + 1 * i}")
+                    lista_opciones.append(f"{self.columna - 1 * i}:{self.fila - 1 * i}")
 
 
                 
@@ -1043,7 +975,6 @@ def juego(pantalla,medida,colorbot):
                 lista_opciones.append(f"{self.columna }:{self.fila - 1}")
                 lista_opciones.append(f"{self.columna + 1}:{self.fila}")
                 lista_opciones.append(f"{self.columna - 1}:{self.fila}")  
-            #print(lista_opciones,"    -/-/-")
             for cord in lista_opciones:
                 if "-" in cord:
                     lista_opciones.remove(cord)
@@ -1141,7 +1072,7 @@ def juego(pantalla,medida,colorbot):
     #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 
-    lista_fichas=pygame.sprite.Group()#lista sprites
+    lista_fichas=pygame.sprite.Group()
     for i in range(1):
         for c in range(8):
                 peon_negro=ficha("negro",medida_casilla,"peon",x+c,y+1,False)#peon negro 
@@ -1153,9 +1084,6 @@ def juego(pantalla,medida,colorbot):
 
 
 
-
-        #lista_fichas.add(ficha("blanco", medida_casilla, "peon", lista_fichas.sprites()[0].columna, lista_fichas.sprites()[0].fila, False))
-        #lista_fichas.remove(lista_fichas.sprites()[0])
 
 
     #torres negras
@@ -1248,8 +1176,6 @@ def juego(pantalla,medida,colorbot):
 
 
 
-    #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-    #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 
     lista_fichas_negras_mesa=pygame.sprite.Group()
@@ -1270,14 +1196,13 @@ def juego(pantalla,medida,colorbot):
         ficha("blanco",medida_casilla,"alfil",mesa_opciones.rect.x+medida_casilla//2,mesa_opciones.rect.y+medida_casilla+medida_casilla//2,True),
         ficha("blanco",medida_casilla,"caballo",mesa_opciones.rect.x+medida_casilla+medida_casilla//2,mesa_opciones.rect.y+medida_casilla+medida_casilla//2,True),
         )
-    #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-    #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
 
 
     def posicion_dic(color_ficha):
         if color=="blanco":
             return 1
-        return 0#si es negro
+        return 0
 
 
     lista_botones=pygame.sprite.Group()
@@ -1294,10 +1219,9 @@ def juego(pantalla,medida,colorbot):
     alfombra=pygame.transform.scale(alfombra,(ancho_tablero/5,alto_tablero))
     ficha_seleccionada = None
     arrastrando=False
-    pos_original_fila=0#fila actual
-    pos_original_columna=0#columna actual
+    pos_original_fila=0
+    pos_original_columna=0
     turno=0
-    #print(lista_fichas)
     
     if colorbot==None:
         bot_=False
@@ -1445,16 +1369,18 @@ def juego(pantalla,medida,colorbot):
         
         num_reyes=[0,None]
         for posible_rey in lista_fichas:
+            if posible_rey.columna>7:
+                lista_fichas_muertas.add(posible_rey)
+                lista_fichas.remove(posible_rey)
+
             if posible_rey.tipo=="rey":
                 num_reyes[0]+=1
                 num_reyes[1]=posible_rey.color
             
         
         if num_reyes[0]<2:
-            if num_reyes[1]=="blanco":
-                partida_terminada=True#ha ganado el blanco
-            else:
-                partida_terminada=True#ha ganado el negro
+            partida_terminada=True#ha ganado el negro
+
 
 
 
@@ -1469,9 +1395,9 @@ def juego(pantalla,medida,colorbot):
                 if boton[0]==True and ficha_seleccionada==None and tabla_final_colocada==False:#primer click
 
 
-                    for pieza in lista_fichas:#para cada ficha de la lista de fichas
-                        if pieza.rect.collidepoint(mouse):#si ese click colisiona con una ficha
-                            ficha_seleccionada=pieza#la ficha seleccionada es la colisionada
+                    for pieza in lista_fichas:
+                        if pieza.rect.collidepoint(mouse):
+                            ficha_seleccionada=pieza
                             if ficha_seleccionada.color=="blanco":
                                 lista_turno_actual=lista_blancas
                                 Lista_rival_actual=lista_negras
@@ -1498,7 +1424,7 @@ def juego(pantalla,medida,colorbot):
 
                             if ficha_seleccionada.tipo!="caballo" and ficha_seleccionada.tipo!="peon" and ficha_seleccionada.tipo!="rey":
                                 lista_opciones=cords_atravesadas_bot(lista_opciones,lista_posiciones_fichas_rivales,lista_posiciones_fichas_actuales,ficha_seleccionada)
-                                #print(lista_opciones,"----------------")
+                                
                            
 
 
@@ -1513,11 +1439,11 @@ def juego(pantalla,medida,colorbot):
 
 
 
-                            #print(lista_opciones,"         lista opciones")
+                            
                             pos_ox=ficha_seleccionada.rect.x+medida_casilla/4
                             pos_oy=ficha_seleccionada.rect.y+medida_casilla/2
-                            pos_original_fila=ficha_seleccionada.fila#fila original
-                            pos_original_columna=ficha_seleccionada.columna#columna original
+                            pos_original_fila=ficha_seleccionada.fila
+                            pos_original_columna=ficha_seleccionada.columna
 
 
 
@@ -1530,7 +1456,7 @@ def juego(pantalla,medida,colorbot):
 
 
 
-                            break#salimos del for
+                            break
                 if boton[0]==True and ficha_seleccionada!=None and tabla_final_colocada==False:
                     ficha_en_movimiento=True
 
@@ -1539,20 +1465,12 @@ def juego(pantalla,medida,colorbot):
 
                     base=mouse[0]-pos_ox
                     medida_linea=int(math.sqrt((mouse[0]-pos_ox)**2+(mouse[1]-pos_oy)**2))
-                    #print(f"medida linea={medida_linea}")
-                   
-
-
-
-
-                    #pygame.draw.line(pantalla,(255,0,0),(pos_ox,pos_oy),(mouse),3)
+                    
                     arrastrando=True
                     ficha_seleccionada.mover()
-                    ##guardamos todas sus coordenadas posibles de movimiento
+                    
                    
-                    #si es peon creamos la lista nueva
-                   
-                if boton[0]==False and ficha_seleccionada!=None:#soltamos el boton
+                if boton[0]==False and ficha_seleccionada!=None:
                     ficha_en_movimiento=False
 
 
@@ -1563,28 +1481,17 @@ def juego(pantalla,medida,colorbot):
                     x_recorridas=[]
                     y_recorridas=[]
                     ultima_cord_mouse=(int(mouse[0]//medida_casilla),int(mouse[1]//medida_casilla))
-                    #print(ultima_cord_mouse)
-                    pos_ox=int(pos_ox//medida_casilla)#posicion orginal X
-                    pos_oy=int(pos_oy//medida_casilla)#posicion original Y
-                    cordenada_inicial=f"{pos_ox}:{pos_oy}"#cordenada inicial
-                    cordenada_final=f"{ultima_cord_mouse[0]}:{ultima_cord_mouse[1]}"#cordenada final
-                    cords_atravesadas=casillas_recorridas(cordenada_inicial,cordenada_final)#uso la funcion casillas_recorridas para obtener las coordenadas atravesadas
+                    
+                    pos_ox=int(pos_ox//medida_casilla)
+                    pos_oy=int(pos_oy//medida_casilla)
+                    cordenada_inicial=f"{pos_ox}:{pos_oy}"
+                    cordenada_final=f"{ultima_cord_mouse[0]}:{ultima_cord_mouse[1]}"
+                    cords_atravesadas=casillas_recorridas(cordenada_inicial,cordenada_final)
 
-
-
-
-                    #print(cords_atravesadas,"cords atravesadas")
-                   
                     if turno%2==0:
                         color="blanco"
                     else:
                         color="negro"
-
-
-
-
-
-
 
 
             #__________________________________________________________________________________
@@ -1615,7 +1522,7 @@ def juego(pantalla,medida,colorbot):
                                 ficha_seleccionada.fila=pos_original_fila
                                 ficha_seleccionada.actualizar(medida_casilla)
                                 casilla_ocupada=True
-                                #print("rechazado 1")
+                                
                                 break
                                
                             if pieza.columna==cord_columna and pieza.fila==cord_fila and ficha_seleccionada.color!=pieza.color  and coordenada_destino in lista_opciones:
@@ -1623,13 +1530,7 @@ def juego(pantalla,medida,colorbot):
                                 ficha_seleccionada.columna=pieza.columna
                                 ficha_seleccionada.fila=pieza.fila
            
-                                #pieza.columna=int(diccionario_posiciones_muertas[turno%2][pieza.tipo][0])
-                                #pieza.fila=int(diccionario_posiciones_muertas[turno%2][pieza.tipo][2])
-                                #lista_fichas_muertas.add(pieza)    
-                                #lista_fichas.remove(pieza)
-                               
-
-
+                                
 
 
                                 ficha_animacion_activa=pieza
@@ -1659,7 +1560,7 @@ def juego(pantalla,medida,colorbot):
                                 ficha_seleccionada.fila=pos_original_fila
                                 ficha_seleccionada.actualizar(medida_casilla)
                                 casilla_ocupada=True
-                                #print("rechazado 2")
+                                
                                 break
 
 
@@ -1669,25 +1570,19 @@ def juego(pantalla,medida,colorbot):
                             ficha_seleccionada.fila=cord_fila
                             ficha_seleccionada.actualizar(medida_casilla)
                             colocado=True
-                            #print("ha entrado ")
-
-
-
+                            
 
                         else:
                             ficha_seleccionada.columna=pos_original_columna
                             ficha_seleccionada.fila=pos_original_fila
                             ficha_seleccionada.actualizar(medida_casilla)
-                            #print("rechazado 3")
-
-
-
+                            
 
                     else:
                         ficha_seleccionada.columna=pos_original_columna
                         ficha_seleccionada.fila=pos_original_fila
                         ficha_seleccionada.actualizar(medida_casilla)
-                        #print("rechazado 4")
+                        
                     ficha_seleccionada=None
                     arrastrando=False
 
@@ -1701,19 +1596,12 @@ def juego(pantalla,medida,colorbot):
 
             elif bot_==True and (turno%2==1 and color_bot=="negro" or turno%2==0 and color_bot=="blanco") and animacion==False and ficha_animacion_activa==None and partida_terminada==False:
 
-
-
-
-        #lista_opciones_finales.append({"atacante":ficha_bot_actual,"victima":victima_cord,"valor jugada":valor_jugada,"lista rival":lista_rival})
                 if peon_en_posiciones_especiales==1:
                     pass
 
-
-
-
-    #🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛
+    
                 elif peon_en_posiciones_especiales==2 and entrado_bot_opcion_2==False:
-                    #print("peon_posiciones_especiales= 2")
+                    
                     posicion_peon_cambiar=peon_cambiar.columna,peon_cambiar.fila
                     reina_temporal=ficha(color_bot,medida_casilla,"reina",posicion_peon_cambiar[0],posicion_peon_cambiar[1],False)
                     caballo_temporal=ficha(color_bot,medida_casilla,"caballo",posicion_peon_cambiar[0],posicion_peon_cambiar[1],False)
@@ -1737,7 +1625,7 @@ def juego(pantalla,medida,colorbot):
                    
                    
                    
-                    #valores_fichas={"rey":9999,"reina":9,"torre":5,"alfil":3,"caballo":3,"peon":1}
+                    
                     dic_puntuaciones_reina={}
                     dic_puntuaciones_caballo={}
 
@@ -1802,13 +1690,12 @@ def juego(pantalla,medida,colorbot):
 
 
                     opcion_final_bot=tipo_ficha_final,color_ficha_final
-                    print(opcion_final_bot,"  ¡¡¡FINAL!!!")
                     entrado_bot_opcion_2=True                
                    
 
-                    #escoger reina o caballo dependido de lo que sea mejor
+                
                    
-    #🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛🟨⬛
+    
 
 
 
@@ -1818,29 +1705,23 @@ def juego(pantalla,medida,colorbot):
 
 
 
-                        for ficha_bot_cord in lista_fichas:
-                            if ficha_bot_cord.columna>7:
-                                lista_fichas_muertas.add(ficha_bot_cord)
-                                lista_fichas.remove(ficha_bot_cord)
+                        
 
 
                         objetivo=bot(lista_fichas,lista_casillas_ocupadas,color_bot,medida_casilla)
                         cordenada_objetivo=objetivo["victima"]
-                        #print(cordenada_objetivo,"  cordenada mandada por la funcion bot para colocar la ficha")
                         eliminar_ficha_rival=False
                         ficha_bot=objetivo["atacante"]
-                        #print(ficha_bot.tipo," tipo ficha bot")
                         ficha_objetivo=None
 
 
 
-                        #print(ficha_objetivo, "    despues del None")
                         for ficha_rival in objetivo["lista rival"]:
                             if f"{ficha_rival.columna}:{ficha_rival.fila}"==cordenada_objetivo:
                                 eliminar_ficha_rival=True
                                 ficha_objetivo=ficha_rival
                        
-                        if eliminar_ficha_rival==True:#matar
+                        if eliminar_ficha_rival==True:
                             ficha_animacion_activa=ficha_bot
                             cordenada_objetivo=f"{((int(objetivo['victima'][0]))*medida_casilla)+(medida_casilla/4)}:{int(objetivo['victima'][2])*medida_casilla}"
                             cordenada_objetivo_reducida=f"{int(objetivo['victima'][0])}:{int(objetivo['victima'][2])}"
@@ -1853,7 +1734,7 @@ def juego(pantalla,medida,colorbot):
                             turno+=1                      
                             num_turnos_bot+=1
 
-                        else:#no matar
+                        else:
 
                             ficha_animacion_activa=ficha_bot
                             cordenada_objetivo=f"{((int(objetivo['victima'][0]))*medida_casilla)+(medida_casilla/4)}:{int(objetivo['victima'][2])*medida_casilla}"
@@ -1870,7 +1751,6 @@ def juego(pantalla,medida,colorbot):
                         ficha_en_movimiento=True
 
 
-        #dibujar tablero
         y=0
         x=0
 
@@ -1880,7 +1760,6 @@ def juego(pantalla,medida,colorbot):
                     pieza.actualizar(medida_casilla)
 
     #_________________________________________________________________________________________________
-            #movimiento_realista(cord_a,cord_b,medida_casilla)
     
         if mesa_colocada==True and movimiento_mesa==True and opcion_final_bot!=None:
             ficha_escogida_para_cambiar_tipo_color=opcion_final_bot
@@ -1891,11 +1770,7 @@ def juego(pantalla,medida,colorbot):
             if f"{int(ficha_animacion_activa.rect.x//medida_casilla)}:{int((ficha_animacion_activa.rect.y+(medida_casilla/2))//medida_casilla)}"!=cordenada_objetivo_reducida:
 
 
-                print("------------------")
-                print(cordenada_objetivo_reducida)
-                print(f"{int(ficha_animacion_activa.rect.x//medida_casilla)}:{int((ficha_animacion_activa.rect.y+(medida_casilla/2))//medida_casilla)}")
-                #print("cordenada actual:",simplificar_cord(f"{(ficha_animacion_activa.rect.x)}:{ficha_animacion_activa.rect.y}",medida_casilla),"cordenada actual 2: ",f"{int(ficha_animacion_activa.rect.x//medida_casilla)}:{int(ficha_animacion_activa.rect.y//medida_casilla)}","  cordenada objetivo:",cordenada_objetivo_reducida)
-            
+
                 ficha_animacion_activa.rect.x+=num_x
                 ficha_animacion_activa.rect.y+=num_y
                 ficha_animacion_activa.actualizar_medida(medida_casilla)
@@ -1903,10 +1778,10 @@ def juego(pantalla,medida,colorbot):
             
 
             else:
-                print("🟩🟦🟧")
+                
                 if revisado==False:
                     if ficha_animacion_activa.mesa==True:
-                        print(len(lista_fichas),"lista_fichas_num")
+                        
                         color_nueva_ficha=ficha_animacion_activa.color
                         tipo_nueva_ficha=ficha_animacion_activa.tipo
                         cord_ficha_nueva=(int(cordenada_objetivo_reducida[0]),int(cordenada_objetivo_reducida[2]))
@@ -1914,7 +1789,7 @@ def juego(pantalla,medida,colorbot):
                         ficha_animacion_activa=ficha(color_nueva_ficha,medida_casilla,tipo_nueva_ficha,cord_ficha_nueva[0],cord_ficha_nueva[1],False)
                         lista_fichas.add(ficha_animacion_activa)
                         
-                        #print(len(lista_fichas,"lista_fichas num"))
+                        
                     
                     
                     ficha_animacion_activa.columna=int(cordenada_objetivo_reducida[0])
@@ -1941,7 +1816,6 @@ def juego(pantalla,medida,colorbot):
                         cord_objetivo_ficha_asesinada=f"{cord_objetivo_x}:{cord_objetivo_y}"
                        
                         num_x_muerto,num_y_muerto=movimiento_realista(f"{(ficha_asesinada.rect.x)}:{ficha_asesinada.rect.y}",cord_objetivo_ficha_asesinada,medida_casilla)
-                        #print("cord onjetivo: ",cord_objetivo_ficha_asesinada)
 
                        
                         cordenada_objetivo_reducida=diccionario_posiciones_muertas[(turno+1)%2][ficha_animacion_activa.tipo]
@@ -1954,8 +1828,7 @@ def juego(pantalla,medida,colorbot):
                 else:
                     ficha_animacion_activa.columna=int(diccionario_posiciones_muertas[(turno+1)%2][ficha_animacion_activa.tipo][0])
                     ficha_animacion_activa.fila=int(diccionario_posiciones_muertas[(turno+1)%2][ficha_animacion_activa.tipo][2])
-                    lista_fichas_muertas.add(ficha_animacion_activa)
-                    lista_fichas.remove(ficha_animacion_activa)
+                    
                     ficha_animacion_activa=None
                     cordenada_objetivo=None
                     animacion=False
@@ -1971,8 +1844,7 @@ def juego(pantalla,medida,colorbot):
         lista_fichas.draw(pantalla)
        
 
-        #for sprite in lista_fichas:
-            #pygame.draw.rect(pantalla, (57, 255, 20), sprite.rect, 2)
+
         if turno%2==0:
             pygame.draw.rect(pantalla, (240,240,240), (0,0,medida_casilla/4,medida_casilla/4))
 
@@ -1995,7 +1867,6 @@ def juego(pantalla,medida,colorbot):
             for posible_peon in lista_fichas :
                 if (posible_peon.tipo == "peon" and posible_peon.columna not in [8,9]):
                     if(posible_peon.color == "blanco" and posible_peon.fila == 0):
-                    #print("🟨")
                         peon_cambiar=posible_peon
                         movimiento_mesa=True
                         mesa_colocada=False
@@ -2013,7 +1884,6 @@ def juego(pantalla,medida,colorbot):
                             turno+=1
                        
                        
-                        #print("🟩🟩")
                         break
                     elif (posible_peon.color == "negro" and posible_peon.fila == 7):
                         peon_cambiar=posible_peon
@@ -2050,12 +1920,6 @@ def juego(pantalla,medida,colorbot):
 
 
 
-
-
-
-
-
-        #print((mesa_opciones.rect.y+(medida_casilla/2))//medida_casilla,"   fila")
         if movimiento_mesa==True:
            
             if (mesa_opciones.rect.y+(medida_casilla/2))//medida_casilla==2:
@@ -2072,7 +1936,6 @@ def juego(pantalla,medida,colorbot):
                 pixeles_mover+=2
        
         elif movimiento_mesa==False:
-            #print("🟥")
             if (mesa_opciones.rect.y+(medida_casilla/2))//medida_casilla==y_mesa_deshabilitada//medida_casilla:
                 mesa_colocada=True
 
@@ -2082,7 +1945,6 @@ def juego(pantalla,medida,colorbot):
             if mesa_colocada==True:
                 mesa_opciones.actualizar_mesa(medida_casilla,x_mesa,y_mesa_deshabilitada)
                 pixeles_mover=0
-                #print("🟧")
             elif mesa_colocada==False:
                 mesa_opciones.actualizar_mesa(medida_casilla,x_mesa,y_mesa_habilitada-pixeles_mover)
                 pixeles_mover+=2
@@ -2112,28 +1974,22 @@ def juego(pantalla,medida,colorbot):
                         break
            
             if boton[0]==True and ficha_tocada!=None and clicado==False:
-                #print("🟥🟥🟥")
                 mouse_simplificado=int(mouse[0]//medida_casilla),int(mouse[1]//medida_casilla)
-                #print(mouse_simplificado)
                
                 if mouse_simplificado==(8,3) or mouse_simplificado==(8,2):
                     ficha_escogida_para_cambiar_tipo_color="reina",color_fichas_mesas
-                    #print(ficha_escogida_para_cambiar_tipo_color)                
                
                 elif mouse_simplificado==(9,3) or mouse_simplificado==(9,2):
                     ficha_escogida_para_cambiar_tipo_color="torre",color_fichas_mesas
-                    #print(ficha_escogida_para_cambiar_tipo_color)
                
                 elif mouse_simplificado==(8,4) or mouse_simplificado==(8,5):
                     ficha_escogida_para_cambiar_tipo_color="alfil",color_fichas_mesas
-                    #print(ficha_escogida_para_cambiar_tipo_color)
 
 
 
 
                 elif mouse_simplificado==(9,4) or mouse_simplificado==(9,5):
                     ficha_escogida_para_cambiar_tipo_color="caballo",color_fichas_mesas
-                    #print(ficha_escogida_para_cambiar_tipo_color)
                
                
                 clicado=True
@@ -2141,18 +1997,13 @@ def juego(pantalla,medida,colorbot):
 
 
 
-                #ficha_escogida_para_cambiar_tipo_color=ficha_tocada.tipo,ficha_tocada.color
-                #print(ficha_escogida_para_cambiar_tipo_color)
-
 
 
 
            
-            #print(mesa_colocada)
             if tocando==True :
                 for ficha_ in lista_fichas_mesa_actual:
                     if ficha_.rect.collidepoint(pygame.mouse.get_pos())==False and ficha_==ficha_tocada:
-                        #print("REDUCIR")
                         ficha_.reducir()
                         tocando=False
                         ficha_tocada=None
@@ -2165,11 +2016,8 @@ def juego(pantalla,medida,colorbot):
 
 
 
-    #reina_negra=ficha("negro",medida_casilla,"reina",x+3,y,False)
-        #print("informacion obtenida: ",informacion_obtenida)
+
         if peon_cambiar!=None and ficha_escogida_para_cambiar_tipo_color!=None and informacion_obtenida==False:
-            print("⬜⬜⬜⬜")
-            #print(peon_cambiar)
 
 
             if ficha_escogida_para_cambiar_tipo_color[0]=="reina":
@@ -2185,11 +2033,7 @@ def juego(pantalla,medida,colorbot):
                 ficha_nueva=ficha(ficha_escogida_para_cambiar_tipo_color[1],medida_casilla,ficha_escogida_para_cambiar_tipo_color[0],9,4,True)            
 
 
-            #print(ficha_escogida_para_cambiar_tipo_color[0],ficha_escogida_para_cambiar_tipo_color[1])
-            #print(ficha_nueva.color,ficha_nueva.tipo,ficha_nueva.columna,ficha_nueva.fila,"    🟧🟧🟧🟧🟧🟧🟧🟧")
-            #ficha_nueva.actualizar(medida_casilla)  
-            #print(ficha_nueva.columna,ficha_nueva.fila)
-            #ficha animacion activa=ficha añadida
+
            
             if ficha_nueva.tipo=="reina":
                 x_ficha_nueva=mesa_opciones.rect.x+(medida_casilla/10)*9
@@ -2228,7 +2072,6 @@ def juego(pantalla,medida,colorbot):
         cord_y=mesa_opciones.rect.y
         cord_x=mesa_opciones.rect.x
 
-        #actualizar_posicion_especifica(self,medida_casilla,cord_x,cord_y)
         c=0
         
         
@@ -2236,18 +2079,13 @@ def juego(pantalla,medida,colorbot):
             cambio_de_ficha=True
         
         if mesa_colocada==True and movimiento_mesa==False and cambio_de_ficha==True:
-            print("------------------")
-            print(turno)
-            print("🟨🟨turno+=1🟨🟨")
             turno+=1
-            print(turno)
             cambio_de_ficha=False
 
 
 
         if ficha_animacion_activa!=None:
             pass
-            #print(ficha_animacion_activa.rect.x,ficha_animacion_activa.rect.y)
 
 
         for ficha_mesa in lista_fichas_mesa_actual:
@@ -2263,7 +2101,6 @@ def juego(pantalla,medida,colorbot):
             c+=1
 
 
-        #pygame.draw.circle(pantalla,(13,13,13),(mesa_opciones.rect.x+(medida_casilla/10)*9,mesa_opciones.rect.y+(medida_casilla/4)*3),5)
 
 
         lista_fichas_mesa_actual.draw(pantalla)
@@ -2272,11 +2109,6 @@ def juego(pantalla,medida,colorbot):
         clock.tick(120)
 
 
-        if ficha_animacion_activa!=None:
-            pass
-            #print(ficha_animacion_activa.tipo,ficha_animacion_activa.color)
-        
-        #actualizar_mesa(self,mediada_casilla,x,y):
 
 
         if mesa_colocada==True and movimiento_mesa==False:
@@ -2321,7 +2153,6 @@ def juego(pantalla,medida,colorbot):
 
             
             if tabla_final_colocada==True and boton_final_tocado==None:
-                
                 for boton_final in lista_botones:
                     if boton_final.rect.collidepoint(mouse):
                         boton_final_tocado=boton_final
@@ -2340,29 +2171,16 @@ def juego(pantalla,medida,colorbot):
                     i=0
                     for boton_final in lista_botones:
                         if boton_final==boton_final_tocado and i==0:
-                            juego(pantalla,medida_casilla,color_bot) #devolver menu pa volver a jugar
+                            juego(pantalla,medida_casilla,color_bot) 
                             jugando=False
                         else:
-                            return menu(medida_casilla) #volver al menu
+                            return menu(medida_casilla) 
                         i+=1
 
             
             
             lista_botones.draw(pantalla)
             
-
-
-
-
-            
-
-        
-
-
-
-
-
-
 
 
 
@@ -2403,16 +2221,6 @@ def juego(pantalla,medida,colorbot):
             print("--------------------------------------")
 
 
-        if ficha_animacion_activa!=i and gg==True:
-            
-            print(ficha_animacion_activa)
-            if ficha_animacion_activa!=None:
-                print(ficha_animacion_activa.tipo)
-
-
-            i=ficha_animacion_activa
-            print("---------------")
-        
 
         
         pygame.display.flip()
@@ -2595,29 +2403,23 @@ def menu(medida):
                             num+=1
                     
                     elif situacion_menu==2:
-                        print("🟨🟨")
                         num=0
                         for boton_actual in listas_botones[2]:
                             if boton_actual==boton_tocando and num==0:
-                                print("🟧")
                                 resultado=juego(pantalla,medida_casilla,"negro") #jugar bot
-                                print("⬜")
                                 funcionando=False
 
 
                             elif boton_actual==boton_tocando and num==1:
-                                print("🟩")
                                 resultado=juego(pantalla,medida_casilla,"blanco") #jugar bot
                                 funcionando=False
 
 
                             elif boton_actual==boton_tocando and num==2:
-                                print("🟦")
                                 resultado=juego(pantalla,medida_casilla,None) #jugar individual
                                 funcionando=False
                             num+=1
                             
-                    print(situacion_menu)
 
 
 
@@ -2634,27 +2436,3 @@ menu(85)
 
 
 
-
-
-        #respuesta=input("quieres jugar?(si/no): ")
-        #if respuesta=="si":
-        #    jugar=True
-        #elif respuesta=="no":
-        #    jugar=False
-        
-        #if jugar==True:
-        #    juego(pantalla,medida_casilla)
-        
-        #else :
-
-
-
-
-
-
-#el bot usa fichas muertas para matar
-#en caso de problemas con las cordenadas, el problema no estaria en la funcion restricciones
-#error: no se muere el peon, se queda donde antes
-#el bot usa fichas muertas para matar
-#en caso de problemas con las cordenadas, el problema no estaria en la funcion restricciones
-#error: no se muere el peon, se queda donde antes
